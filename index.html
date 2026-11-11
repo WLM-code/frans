@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b2a6b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Allez, Frans!">
+<title>Allez, Frans!</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<script>
+window.onerror=function(m,u,l,c){var a=document.getElementById('app');if(a)a.innerHTML='<div style="margin:20px;padding:16px;border:2px solid #d64550;border-radius:14px;background:#fff;color:#1b2a6b;font:700 15px sans-serif"><b>Er ging iets mis.</b><br>Stuur een screenshot hiervan naar Claude:<br><br><code style="font-size:13px;word-break:break-word">'+String(m)+' (regel '+l+')</code></div>';};
+</script>
+<style>
+:root{--ink:#1b2a6b;--blue:#2b4aa8;--red:#e0414b;--cream:#fbf5e9;--card:#fffdf7;--mustard:#f6c548;--ok:#2f9e6e;--bad:#d64550;--soft:#e9e2d2;
+ --pat:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='%231b2a6b' fill-opacity='0.075'%3E%3Cg transform='translate%286 4%29 scale%28.34%29'%3E%3Cg%3E%3Cpath d='M50 6C39 21 39 41 50 58 61 41 61 21 50 6Z'/%3E%3Cpath d='M46 57C34 35 10 33 11 52 12 63 25 67 35 60 29 58 26 52 29 47 37 49 42 55 46 61Z'/%3E%3Cpath d='M54 57C66 35 90 33 89 52 88 63 75 67 65 60 71 58 74 52 71 47 63 49 58 55 54 61Z'/%3E%3Crect x='31' y='61' width='38' height='8' rx='3'/%3E%3Cpath d='M50 69C46 76 42 82 35 86 42 87 47 84 50 80 53 84 58 87 65 86 58 82 54 76 50 69Z'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate%2854 52%29 scale%28.34%29'%3E%3Cg%3E%3Cpath d='M50 6C39 21 39 41 50 58 61 41 61 21 50 6Z'/%3E%3Cpath d='M46 57C34 35 10 33 11 52 12 63 25 67 35 60 29 58 26 52 29 47 37 49 42 55 46 61Z'/%3E%3Cpath d='M54 57C66 35 90 33 89 52 88 63 75 67 65 60 71 58 74 52 71 47 63 49 58 55 54 61Z'/%3E%3Crect x='31' y='61' width='38' height='8' rx='3'/%3E%3Cpath d='M50 69C46 76 42 82 35 86 42 87 47 84 50 80 53 84 58 87 65 86 58 82 54 76 50 69Z'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3Cg fill='%23e0414b' fill-opacity='0.12'%3E%3Ccircle cx='72' cy='14' r='2.2'/%3E%3Ccircle cx='24' cy='62' r='2.2'/%3E%3C/g%3E%3C/svg%3E");}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:'Nunito',system-ui,-apple-system,Segoe UI,sans-serif;font-weight:700;color:var(--ink);background-color:var(--cream);background-image:var(--pat);background-size:96px 96px;min-height:100vh;min-height:100dvh;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+.band{position:fixed;top:0;left:0;right:0;height:9px;z-index:60;background:linear-gradient(90deg,var(--blue) 0 33.4%,#fff 33.4% 66.7%,var(--red) 66.7%);border-bottom:1.5px solid var(--ink)}
+#app{max-width:520px;margin:0 auto;padding:26px 16px calc(110px + env(safe-area-inset-bottom))}
+.screen{animation:in .28s ease both}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;margin:0;font-weight:900;letter-spacing:-.01em}
+
+/* knoppen */
+.btn{display:block;width:100%;border:1.5px solid var(--ink);border-radius:16px;background:var(--red);color:#fff;font-weight:900;font-size:18px;padding:15px 20px;box-shadow:0 4px 0 var(--ink);transition:transform .08s,box-shadow .08s;min-height:54px}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn.alt{background:var(--card);color:var(--ink)}
+.btn.blue{background:var(--blue)}
+.btn.ok{background:var(--ok)}
+.btn + .btn{margin-top:12px}
+.card{background:var(--card);border:1.5px solid var(--ink);border-radius:20px;box-shadow:3px 3px 0 var(--ink)}
+
+/* home */
+.head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.head svg{flex:none}
+.head h1{font-size:34px;line-height:1}
+.head p{margin:3px 0 0;font-size:14px;opacity:.8}
+.pills{display:flex;gap:8px;margin-bottom:16px}
+.pill{display:flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--ink);border-radius:999px;padding:6px 12px;font-weight:900;font-size:15px}
+.hint{background:#fff6d6;border:1.5px dashed var(--ink);border-radius:14px;padding:10px 14px;font-size:14px;margin-bottom:16px}
+
+.mix{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:14px;margin-bottom:22px;position:relative;background:var(--card);border:1.5px solid var(--ink);border-radius:20px;box-shadow:3px 3px 0 var(--ink);overflow:hidden}
+.mix::before{content:"";position:absolute;left:0;right:0;top:0;height:7px;background:linear-gradient(90deg,var(--blue) 0 33.4%,#fff 33.4% 66.7%,var(--red) 66.7%);border-bottom:1.5px solid var(--ink)}
+.mix .ico{flex:none;width:58px;height:58px;border-radius:50%;border:1.5px solid var(--ink);background:var(--mustard);display:grid;place-items:center;font-size:28px;margin-top:6px}
+.mix strong{display:block;font-family:'Fraunces',Georgia,serif;font-size:21px;margin-top:6px}
+.mix small{display:block;font-size:13px;opacity:.85;line-height:1.3}
+.mix.locked{background:var(--soft);box-shadow:none}
+.mix.locked .ico{background:#d8d0be;filter:grayscale(1)}
+
+.path{position:relative;display:flex;flex-direction:column;gap:18px}
+.path::before{content:"";position:absolute;top:20px;bottom:20px;left:50%;border-left:2.5px dashed rgba(27,42,107,.35);z-index:0}
+.tc{position:relative;z-index:1;display:flex;align-items:center;gap:14px;width:90%;text-align:left;padding:12px 14px 12px 12px;background:var(--card);border:1.5px solid var(--ink);border-radius:22px;box-shadow:3px 3px 0 var(--ink);transition:transform .08s}
+.tc:nth-child(even){margin-left:auto}
+.tc:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.num{position:relative;flex:none;width:66px;height:66px;border-radius:50%;border:1.5px solid var(--ink);background:var(--c);display:grid;place-items:center;font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:30px}
+.num i{position:absolute;right:-8px;bottom:-6px;width:30px;height:30px;border-radius:50%;background:#fff;border:1.5px solid var(--ink);display:grid;place-items:center;font-style:normal;font-size:16px}
+.tc .txt{flex:1;min-width:0}
+.tc strong{display:block;font-size:17px;line-height:1.15}
+.tc small{display:block;font-size:12.5px;opacity:.75;margin:2px 0 4px}
+.stars{display:flex;gap:2px}
+.tc .st{flex:none;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;background:var(--ok);color:#fff;font-size:16px;font-weight:900}
+.tc.open .st{background:var(--red)}
+.tc.locked{background:var(--soft);box-shadow:none}
+.tc.locked .num{background:#d8d0be;color:#8d8670}
+.tc.locked .num i{filter:grayscale(1);opacity:.6}
+.tc.locked .st{background:#d8d0be;color:#6f6a58}
+.tc.locked strong,.tc.locked small{opacity:.55}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+/* navigatie */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--card);border-top:1.5px solid var(--ink);padding:8px 12px calc(8px + env(safe-area-inset-bottom))}
+.nav div{max-width:520px;margin:0 auto;display:flex;gap:10px}
+.nav button{flex:1;border:1.5px solid transparent;background:none;border-radius:14px;padding:8px 6px;font-weight:900;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:54px}
+.nav button span{font-size:22px;line-height:1}
+.nav button.on{background:var(--mustard);border-color:var(--ink)}
+
+/* thema-scherm */
+.back{border:1.5px solid var(--ink);background:var(--card);border-radius:14px;padding:8px 14px;font-weight:900;margin-bottom:14px;box-shadow:0 3px 0 var(--ink)}
+.hero{position:relative;background:var(--c);border:1.5px solid var(--ink);border-radius:24px;box-shadow:3px 3px 0 var(--ink);padding:18px 16px 16px;text-align:center;margin-bottom:16px;overflow:hidden}
+.hero .big{width:84px;height:84px;margin:0 auto 8px;border-radius:50%;background:#fff;border:1.5px solid var(--ink);display:grid;place-items:center;font-size:42px}
+.hero h2{font-size:27px}
+.hero p{margin:4px 0 0;font-size:14px}
+.stats{display:flex;gap:10px;margin-bottom:16px}
+.stat{flex:1;text-align:center;padding:10px 6px}
+.stat b{display:block;font-family:'Fraunces',Georgia,serif;font-size:22px}
+.stat span{font-size:12px;opacity:.75}
+.chiprow{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 16px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:900;border:1.5px solid var(--ink);border-radius:999px;padding:3px 10px;background:#fff}
+.chip.rep{background:var(--mustard)}
+h3.sec{font-size:19px;margin:20px 0 8px}
+.wg{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;opacity:.65;margin:14px 0 6px}
+.w{display:flex;align-items:center;gap:10px;padding:9px 12px;margin-bottom:7px}
+.w div{flex:1;min-width:0}
+.w b{display:block;font-size:17px}
+.w span{font-size:14px;opacity:.8}
+.spk{flex:none;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--ink);background:var(--mustard);font-size:18px;display:grid;place-items:center;padding:0}
+details.nums{margin-top:14px}
+details.nums summary{cursor:pointer;font-weight:900;padding:12px 14px;list-style:none}
+details.nums summary::after{content:" ▾"}
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;padding:0 14px 14px;font-size:14px}
+.ng span b{display:inline-block;min-width:30px}
+
+/* quiz */
+.quiz{padding-bottom:210px}
+.qtop{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.x{flex:none;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--ink);background:var(--card);font-size:18px;font-weight:900;padding:0}
+.bar{flex:1;height:16px;border:1.5px solid var(--ink);border-radius:999px;background:#fff;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--red));transition:width .35s}
+.cnt{font-weight:900;font-size:14px;min-width:42px;text-align:right}
+.qcard{padding:18px 16px 18px}
+.qtitle{font-size:15px;margin:8px 0 10px;opacity:.8}
+.prompt{display:flex;align-items:center;justify-content:center;gap:12px;text-align:center;font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:30px;line-height:1.15;padding:14px 4px 18px;word-break:break-word}
+.prompt.nl{font-family:'Nunito',sans-serif;font-size:26px}
+.prompt.num{font-size:54px}
+.prompt .spk{width:48px;height:48px}
+.opts{display:grid;gap:10px}
+.opt{border:1.5px solid var(--ink);border-radius:16px;background:#fff;padding:14px 14px;font-weight:800;font-size:18px;text-align:left;box-shadow:0 3px 0 var(--ink);min-height:56px;transition:transform .08s}
+.opt:active{transform:translateY(2px)}
+.opt.good{background:#c9f0dc;border-color:var(--ok);box-shadow:0 3px 0 var(--ok)}
+.opt.wrong{background:#fbd3d6;border-color:var(--bad);box-shadow:0 3px 0 var(--bad)}
+.opt:disabled{cursor:default}
+.typebox{display:flex;gap:10px}
+.typebox input{flex:1;min-width:0;border:1.5px solid var(--ink);border-radius:16px;padding:14px;font:800 20px 'Nunito',sans-serif;color:var(--ink);background:#fff;box-shadow:inset 0 2px 0 rgba(0,0,0,.06)}
+.typebox input:focus{outline:3px solid var(--mustard)}
+.typebox .btn{width:auto;padding:0 18px}
+.accents{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.accents button{width:42px;height:42px;border:1.5px solid var(--ink);border-radius:12px;background:var(--card);font-weight:900;font-size:18px;padding:0}
+.showw{display:block;margin:14px auto 0;background:none;border:none;text-decoration:underline;font-weight:800;font-size:14px}
+.fb{position:fixed;left:0;right:0;bottom:0;z-index:55;padding:14px 16px calc(16px + env(safe-area-inset-bottom));border-top:1.5px solid var(--ink);animation:up .25s ease both}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.fb.ok{background:#c9f0dc}.fb.bad{background:#fbd3d6}
+.fb > div{max-width:520px;margin:0 auto}
+.fb h3{font-size:22px;margin-bottom:4px}
+.fb p{margin:0 0 12px;font-size:16px}
+.fb p b{font-family:'Fraunces',Georgia,serif;font-size:18px}
+.fb .row{display:flex;align-items:center;gap:10px}
+.fb .row p{flex:1;margin:0 0 12px}
+.fb .spk{width:40px;height:40px;margin-bottom:12px}
+
+/* resultaat */
+.res{text-align:center}
+.res .big{font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:64px;line-height:1;margin:8px 0}
+.res .bigstars{display:flex;justify-content:center;gap:8px;margin:10px 0}
+.res .bigstars svg{width:54px;height:54px}
+.res p{margin:6px 0 16px;font-size:16px}
+.newb{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:6px 0 18px}
+.nb{width:104px;padding:10px 6px;text-align:center;animation:pop .5s cubic-bezier(.2,1.6,.4,1) both}
+.nb .bd{width:56px;height:56px;margin:0 auto 4px}
+.nb b{font-size:13px;display:block;line-height:1.15}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+.missed{text-align:left;margin:0 0 18px}
+.missed .w{padding:7px 12px}
+.conf{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:80;overflow:hidden}
+.conf i{position:absolute;top:-20px;width:10px;height:16px;border:1px solid var(--ink);animation:fall linear forwards}
+@keyframes fall{to{top:105%;transform:rotate(720deg)}}
+
+/* badges */
+.bgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.badge{padding:12px 6px 10px;text-align:center}
+.bd{width:62px;height:62px;margin:0 auto 6px;border-radius:50%;border:1.5px solid var(--ink);background:var(--c,var(--mustard));display:grid;place-items:center;font-size:30px;position:relative}
+.bd::after{content:"";position:absolute;top:4px;left:4px;right:4px;bottom:4px;border-radius:50%;border:1px dashed rgba(27,42,107,.5)}
+.badge b{display:block;font-size:13px;line-height:1.15}
+.badge small{display:block;font-size:11px;opacity:.75;margin-top:2px;line-height:1.2}
+.badge.off{background:var(--soft);box-shadow:none}
+.badge.off .bd{background:#d8d0be;filter:grayscale(1);opacity:.6}
+.badge.off b{opacity:.6}
+.sheetbg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(27,42,107,.45);z-index:90;display:grid;place-items:end center}
+.sheet{width:100%;max-width:520px;background:var(--card);border:1.5px solid var(--ink);border-radius:24px 24px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));animation:up .25s ease both}
+.sheet h3{font-size:22px;margin-bottom:6px}
+.sheet p{margin:0 0 14px}
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);z-index:95;background:var(--ink);color:#fff;border-radius:14px;padding:10px 16px;font-size:14px;max-width:88vw;text-align:center;animation:in .2s ease both}
+.tiny{font-size:13px;opacity:.7;text-align:center;margin-top:18px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="band"></div>
+<div id="app"><p style="text-align:center;padding:40px 10px">Laden…</p></div>
+<noscript><p style="padding:20px">JavaScript staat uit. Zet het aan om de app te gebruiken.</p></noscript>
+<div id="nav"></div>
+
+<script>
+/* ============ DATA ============ */
+const THEMES_RAW=[
+{n:1,name:'Beleefdheden',sub:'',emoji:'🎩',badge:'Politesse',color:'#f6c548',data:`#p
+vous|u (beleefd)
+je|ik
+moi|mij
+#w
+parlez|u spreekt / jullie spreken
+parle|ik spreek
+excusez-moi|neem me niet kwalijk
+peux|ik kan
+#z
+un monsieur|een meneer
+une madame|een mevrouw
+français|Frans
+anglais|Engels
+une bonne journée|een fijne dag
+une bonne soirée|een fijne avond
+#o
+non|nee
+oui|ja
+merci|dank je wel
+s’il vous plaît|alstublieft
+bonjour|goedendag
+bonsoir|goedenavond
+pardon|sorry
+au revoir|tot ziens
+et|en
+(ne) pas|niet`},
+{n:2,name:'Kennismaken',sub:'',emoji:'👋',badge:'Enchanté',color:'#8ec5ee',data:`#p
+tu|jij
+ça|dat
+toi|jou
+me|me
+te|je (lijdend voorwerp)
+#w
+suis|ik ben
+appelle|ik heet
+appelles|jij heet
+va|gaat
+allez|u gaat / jullie gaan
+#z
+une bonne nuit|een goede nacht
+#o
+comment|hoe
+très|heel
+bien|goed
+mal|slecht
+un petit peu|een beetje
+salut|hoi
+aussi|ook
+à demain|tot morgen
+à plus|tot later
+enchanté|aangenaam`},
+{n:3,name:'Iets bestellen',sub:'',emoji:'☕',badge:'Garçon!',color:'#f6a9b9',data:`#w
+est|is
+avez|u hebt / jullie hebben
+voudrais|ik wil graag
+manger|eten
+boire|drinken
+#z
+un menu|een menukaart
+un café|een koffie
+un thé|een thee
+un jus de pomme|een appelsap
+un jus d’orange|een sinaasappelsap
+un soda (coca, pepsi, fanta)|een frisdrank
+un sandwich|een broodje
+un croissant|een croissant
+une crêpe|een pannenkoek
+une table|een tafel
+une personne|een persoon
+#o
+pour|voor
+parfait|perfect
+ou|of
+seulement|alleen maar`},
+{n:4,name:'Afrekenen',sub:'',emoji:'💶',badge:'L’addition',color:'#86d4b4',nums:true,data:`#w
+payer|betalen
+fait|maakt
+coûte|kost
+ai|ik heb
+#z
+un euro|een euro
+un centime|een cent
+#o
+combien|hoeveel
+d’accord|akkoord
+en espèces|contant
+par carte|met pin
+ensemble|samen`},
+{n:5,name:'Verder kennismaken',sub:'leeftijd, land en taal',emoji:'🌍',badge:'Cosmopolite',color:'#bfaef2',data:`#w
+es|jij bent
+êtes|u bent / jullie zijn
+as|jij hebt
+parles|jij spreekt
+viens|ik kom
+venez|u komt / jullie komen
+#z
+quel(le)|welk(e)
+un âge|een leeftijd
+une langue|een taal
+néerlandais(e)|Nederlands
+allemand(e)|Duits
+espagnol(e)|Spaans
+belge|Belgisch
+Liège|Luik
+Berlin|Berlijn
+Londres|Londen
+Paris|Parijs
+#o
+où|waar
+de|van
+d’où|waarvandaan`},
+{n:6,name:'De weg vragen',sub:'',emoji:'🗺️',badge:'Boussole',color:'#f5a05c',data:`#p
+il|hij
+elle|zij (enkelvoud)
+#w
+cherche|ik zoek
+cherches|jij zoekt
+cherchez|u zoekt / jullie zoeken
+#z
+le magasin|de winkel
+la boulangerie|de bakkerij
+le supermarché|de supermarkt
+la pharmacie|de apotheek
+le restaurant|het restaurant
+ouvert(e)|open
+fermé(e)|gesloten
+#o
+ici|hier
+là-bas|daar
+près de|dichtbij
+loin|ver
+à droite|rechts
+à gauche|links
+il y a|er is
+mais|maar`},
+{n:7,name:'Plan een uitje',sub:'',emoji:'🎟️',badge:'Sortie',color:'#6fd0d8',data:`#w
+réserver|reserveren
+#z
+le ticket|het kaartje
+le jour|de dag
+le lundi|maandag
+le mardi|dinsdag
+le mercredi|woensdag
+le jeudi|donderdag
+le vendredi|vrijdag
+le samedi|zaterdag
+le dimanche|zondag
+l’heure|het uur
+le musée|het museum
+le restaurant|het restaurant
+#o
+aujourd’hui|vandaag
+ce soir|vanavond
+demain|morgen
+alors|dus
+à|naar / om / in
+de … à … (tijd)|van … tot … (tijd)
+du … au … (dag)|van … tot … (dag)`},
+{n:8,name:'Praat over je familie',sub:'',emoji:'👨‍👩‍👧',badge:'Famille',color:'#ff8f7e',data:`#p
+ils|zij (meervoud)
+se|zich
+#w
+sont|zij zijn
+s’appelle|hij heet / zij heet
+s’appellent|zij heten
+parle|hij spreekt
+parlent|zij spreken
+#z
+la mère|de moeder
+le père|de vader
+le frère|de broer
+la sœur|de zus
+les parents|de ouders
+mon, ma, mes|mijn
+ton, ta, tes|jouw
+gentil(le)|aardig
+marrant(e)|grappig
+petit(e)|klein
+grand(e)|groot
+#o
+avec|met
+seul(e)|alleen
+qui|wie
+en vacances|op vakantie`},
+{n:9,name:'Kleding shoppen',sub:'',emoji:'👗',badge:'Fashion',color:'#e9a6e0',data:`#w
+aime|hij houdt van
+aimes|jij houdt van
+aimez|u houdt van / jullie houden van
+aiment|zij houden van
+essayer|passen (kleding)
+#z
+un jean|een spijkerbroek
+un short|een korte broek
+un t-shirt|een t-shirt
+une jupe|een rok
+une robe|een jurk
+une taille|een maat
+rouge|rood
+bleu(e)|blauw
+vert(e)|groen
+noir(e)|zwart
+blanc(he)|wit
+long(ue)|lang
+court(e)|kort
+cher (chère)|duur|chère
+cabine d’essayage|de paskamer
+#o
+trop|te veel
+plus|meer
+moins|minder`},
+{n:10,name:'Met vrienden',sub:'',emoji:'🥂',badge:'Les copains',color:'#c9de6a',data:`#p
+nous|wij
+on|we
+vous|jullie
+#w
+voudrions|wij willen graag
+voudrait|hij wil graag
+sommes|wij zijn
+aimons|wij houden van
+avons|wij hebben
+a|hij heeft
+parlons|wij spreken
+venons|wij komen
+vient|hij komt
+nous nous appelons|wij heten
+on s’appelle|we heten
+on se connaît|we kennen elkaar
+on se voit|we zien elkaar
+#z
+le copain|de vriend
+la copine|de vriendin
+le voisin|de buurman
+la voisine|de buurvrouw
+meilleur(e)|beste
+la maternelle|de kleuterschool
+l’école|de school
+#o
+depuis|sinds`}
+];
+const GROUPS={p:'Voornaamwoorden',w:'Werkwoorden',z:'Naamwoorden',o:'Overige woorden'};
+const TYPELABEL={p:'voornaamwoord',w:'werkwoord',z:'naamwoord',o:'woord of zin'};
+const PASS=0.8, ROUND=10, MIXROUND=15, MIXMIN=2;
+const KEY='allez_frans_v1';
+
+/* parse */
+const THEMES=THEMES_RAW.map(t=>{
+  let cur='o';const items=[];
+  t.data.split('\n').forEach(l=>{
+    l=l.trim(); if(!l)return;
+    if(l[0]==='#'){cur=l[1];return;}
+    const [fr,nl,alt]=l.split('|');
+    const plain=fr.replace(/\s*\([^)]*\)/g,'');
+    items.push({th:t.n,t:cur,fr,nl,alt:alt?[alt]:[],key:fr+'|'+nl,typable:!/[…,]/.test(plain)});
+  });
+  return Object.assign({},t,{items});
+});
+const ITEMS=THEMES.flatMap(t=>t.items);
+const themeBy=n=>THEMES[n-1];
+
+/* telwoorden */
+const U=['zéro','un','deux','trois','quatre','cinq','six','sept','huit','neuf','dix','onze','douze','treize','quatorze','quinze','seize'];
+const TENS={2:'vingt',3:'trente',4:'quarante',5:'cinquante',6:'soixante'};
+function frNum(n){
+  if(n<=16)return U[n];
+  if(n<20)return 'dix-'+U[n-10];
+  if(n===100)return 'cent';
+  if(n<70){const t=Math.floor(n/10),u=n%10;if(u===0)return TENS[t];return TENS[t]+(u===1?' et un':'-'+U[u]);}
+  if(n<80){const r=n-60;return r===11?'soixante et onze':'soixante-'+frNum(r);}
+  if(n===80)return 'quatre-vingts';
+  return 'quatre-vingt-'+frNum(n-80);
+}
+
+/* ============ HULPFUNCTIES ============ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function star(on,s=18){return `<svg viewBox="0 0 24 24" width="${s}" height="${s}"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z" fill="${on?'#f6c548':'#fff'}" stroke="#1b2a6b" stroke-width="1.5" stroke-linejoin="round"/></svg>`;}
+const stars=(n,s)=>[1,2,3].map(i=>star(i<=n,s)).join('');
+const starsFor=p=>p>=1?3:p>=.9?2:p>=PASS?1:0;
+
+/* spraak */
+function frVoice(){try{return speechSynthesis.getVoices().find(v=>v.lang&&v.lang.toLowerCase().replace('_','-').startsWith('fr'));}catch(e){}}
+function listenOK(){if(!('speechSynthesis' in window))return false;const v=speechSynthesis.getVoices();return v.length===0||!!frVoice();}
+function speak(text){
+  if(!('speechSynthesis' in window))return;
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='fr-FR';u.rate=.85;const v=frVoice();if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}
+}
+function speakText(fr){
+  return fr.replace(/\(([^)]*)\)/g,(m,x)=>/[ ,]/.test(x)?'':x).replace(/…/g,', ').replace(/\s+/g,' ').trim();
+}
+if('speechSynthesis' in window)try{speechSynthesis.getVoices();}catch(e){}
+
+/* antwoorden controleren */
+const strictN=s=>s.toLowerCase().replace(/[’‘`´]/g,"'").replace(/[-]/g,' ').replace(/[.!?,;:]/g,'').replace(/\s+/g,' ').trim();
+const looseN=s=>strictN(s).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/œ/g,'oe');
+function variants(fr,alt){
+  const out=new Set();
+  [fr].concat(alt||[]).forEach(s=>{
+    const a=s.replace(/\s*\([^)]*\)/g,'').trim();
+    const b=s.replace(/[()]/g,'').replace(/\s+/g,' ').trim();
+    [a,b,s].forEach(v=>{
+      if(!v)return;out.add(v);
+      const m=v.match(/^(?:un|une|le|la|les|l[’'])\s*(.+)$/i);
+      if(m)out.add(m[1]);
+    });
+  });
+  return [...out];
+}
+function checkTyped(input,answers){
+  const i=strictN(input);if(!i)return null;
+  const ls=answers.map(strictN),ll=answers.map(looseN);
+  if(ls.includes(i))return {ok:true,accent:false};
+  if(ll.includes(looseN(input)))return {ok:true,accent:true};
+  return {ok:false};
+}
+
+/* ============ OPSLAG ============ */
+const blank=()=>({v:1,themes:{},words:{},mix:{rounds:0,best:0},correct:0,rounds:0,perfect:0,badges:{},days:[]});
+let S=blank(),memOnly=false;
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(blank(),JSON.parse(r));}catch(e){memOnly=true;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const isDone=n=>!!(S.themes[n]&&S.themes[n].done);
+const unlocked=n=>n===1||isDone(n-1);
+const doneList=()=>THEMES.filter(t=>isDone(t.n)).map(t=>t.n);
+const starsTotal=()=>THEMES.reduce((a,t)=>a+((S.themes[t.n]&&S.themes[t.n].stars)||0),0);
+function streak(){
+  const set=new Set(S.days);let d=new Date(),n=0;
+  const f=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');
+  if(!set.has(f(d)))d.setDate(d.getDate()-1);
+  while(set.has(f(d))){n++;d.setDate(d.getDate()-1);}
+  return n;
+}
+
+/* badges */
+const BADGES=[
+ ...THEMES.map(t=>({id:'t'+t.n,name:t.badge,emoji:t.emoji,color:t.color,desc:'Rond thema '+t.n+' af',test:s=>!!(s.themes[t.n]&&s.themes[t.n].done)})),
+ {id:'first',name:'Premier pas',emoji:'🥖',color:'#f6c548',desc:'Maak je eerste ronde',test:s=>s.rounds>=1},
+ {id:'parfait',name:'Parfait!',emoji:'💯',color:'#f6a9b9',desc:'Alles goed in één ronde',test:s=>s.perfect>=1},
+ {id:'mix',name:'Mix-meester',emoji:'🎨',color:'#bfaef2',desc:'Haal 80% in een mix',test:s=>s.mix.best>=PASS},
+ {id:'c100',name:'Bibliothèque',emoji:'📚',color:'#8ec5ee',desc:'100 goede antwoorden',test:s=>s.correct>=100},
+ {id:'c500',name:'Dictionnaire',emoji:'📖',color:'#86d4b4',desc:'500 goede antwoorden',test:s=>s.correct>=500},
+ {id:'s3',name:'Trois jours',emoji:'🔥',color:'#f5a05c',desc:'3 dagen achter elkaar',test:s=>streakOf(s)>=3},
+ {id:'s7',name:'Une semaine',emoji:'🌟',color:'#6fd0d8',desc:'7 dagen achter elkaar',test:s=>streakOf(s)>=7},
+ {id:'tour',name:'Tour de France',emoji:'🏆',color:'#f6c548',desc:'Alle 10 thema’s af',test:s=>THEMES.every(t=>s.themes[t.n]&&s.themes[t.n].done)}
+];
+function streakOf(s){const keep=S;S=s;const r=streak();S=keep;return r;}
+function checkBadges(){
+  const fresh=[];
+  BADGES.forEach(b=>{if(!S.badges[b.id]&&b.test(S)){S.badges[b.id]=Date.now();fresh.push(b);}});
+  return fresh;
+}
+
+/* ============ VRAGEN ============ */
+function weightedSample(pool,n){
+  const arr=pool.map(it=>{const w=S.words[it.key]||{ok:0,miss:0};return {it,w:(1+1.5*Math.min(3,w.miss))/(1+.1*Math.min(10,w.ok))};});
+  const out=[];
+  while(out.length<n&&arr.length){
+    const tot=arr.reduce((a,x)=>a+x.w,0);let r=Math.random()*tot,i=0;
+    for(;i<arr.length;i++){r-=arr[i].w;if(r<=0)break;}
+    if(i>=arr.length)i=arr.length-1;
+    out.push(arr.splice(i,1)[0].it);
+  }
+  return out;
+}
+function distract(item,pool,field,count){
+  const used=new Set([item[field]]);const res=[];
+  const inPool=ITEMS.filter(i=>pool.has(i.th));
+  const lists=[
+    shuffle(inPool.filter(i=>i.t===item.t)),shuffle(inPool),
+    shuffle(ITEMS.filter(i=>i.t===item.t)),shuffle(ITEMS)
+  ];
+  for(const l of lists){
+    for(const c of l){
+      if(res.length>=count)return res;
+      if(c.fr===item.fr||used.has(c[field]))continue;
+      used.add(c[field]);res.push(c[field]);
+    }
+  }
+  return res;
+}
+function makeQ(item,kind,pool){
+  const q={item,kind,t:item.t,key:item.key,speak:speakText(item.fr)};
+  if(kind==='fr2nl'||kind==='listen'){
+    q.mode='choice';q.answer=item.nl;q.opts=shuffle([item.nl,...distract(item,pool,'nl',3)]);
+    q.title=kind==='listen'?'Luister en kies de betekenis':'Wat betekent dit?';
+    q.prompt=item.fr;q.promptCls='fr';
+  }else if(kind==='nl2fr'){
+    q.mode='choice';q.answer=item.fr;q.opts=shuffle([item.fr,...distract(item,pool,'fr',3)]);
+    q.title='Hoe zeg je dit in het Frans?';q.prompt=item.nl;q.promptCls='nl';q.noSpeakPrompt=true;
+  }else{
+    q.mode='type';q.answers=variants(item.fr,item.alt);q.show=item.fr;
+    q.title='Typ het in het Frans';q.prompt=item.nl;q.promptCls='nl';q.noSpeakPrompt=true;
+  }
+  return q;
+}
+function numQ(kind,n){
+  n=n||rnd(1,100);
+  const q={kind,num:true,n,t:'o',key:null,speak:frNum(n),item:null};
+  if(kind==='n_d2fr'){
+    q.mode='type';q.answers=[frNum(n)];q.show=frNum(n);q.title='Typ het getal in het Frans';q.prompt=String(n);q.promptCls='num';q.noSpeakPrompt=true;
+  }else{
+    const set=new Set([n]);const cand=shuffle([n+1,n-1,n+2,n-2,n+10,n-10,n+5,n-5,(n%10)*10+Math.floor(n/10),n+20,n-20].filter(x=>x>=1&&x<=100));
+    const d=[];for(const c of cand){if(!set.has(c)){set.add(c);d.push(c);}if(d.length===3)break;}
+    while(d.length<3){const c=rnd(1,100);if(!set.has(c)){set.add(c);d.push(c);}}
+    q.mode='choice';q.answer=String(n);q.opts=shuffle([n,...d].map(String));
+    if(kind==='n_listen'){q.title='Luister: welk getal hoor je?';q.prompt=frNum(n);q.promptCls='fr';q.listen=true;}
+    else{q.title='Welk getal is dit?';q.prompt=frNum(n);q.promptCls='fr';}
+  }
+  return q;
+}
+function pickKind(item,canListen){
+  const bag=['fr2nl','fr2nl','fr2nl','nl2fr','nl2fr','nl2fr'];
+  if(item.typable)bag.push('type','type');
+  if(canListen)bag.push('listen','listen');
+  return bag[rnd(0,bag.length-1)];
+}
+function buildRound(nums,count){
+  const pool=new Set(nums);
+  let items=ITEMS.filter(i=>pool.has(i.th));
+  if(nums.length>1){const seen=new Set();items=items.filter(i=>!seen.has(i.fr)&&seen.add(i.fr));}
+  const withNums=nums.includes(4);
+  const numCount=withNums?(nums.length===1?3:2):0;
+  const chosen=weightedSample(items,count-numCount);
+  const canL=listenOK();
+  const qs=chosen.map(it=>{
+    const q=makeQ(it,pickKind(it,canL),pool);
+    if(q.kind==='listen'&&!canL)q.kind='fr2nl';
+    return q;
+  });
+  const nk=['n_fr2d','n_d2fr',canL?'n_listen':'n_fr2d'];
+  for(let i=0;i<numCount;i++)qs.push(numQ(nk[i%nk.length]));
+  return shuffle(qs);
+}
+
+/* ============ STATUS VAN HET SCHERM ============ */
+let V={screen:'home',n:null,round:null,result:null};
+const PHR_OK=['Bravo!','Très bien!','Magnifique!','Excellent!','Super!','Parfait!','Génial!'];
+const PHR_BAD=['Pas tout à fait','Presque!','Courage!','Dommage!','Pas grave!'];
+
+function go(screen,n){
+  V.screen=screen;if(n!==undefined)V.n=n;
+  try{history.pushState({s:screen,n:V.n},'');}catch(e){}
+  render();window.scrollTo(0,0);
+}
+window.addEventListener('popstate',()=>{
+  if(V.screen==='quiz'){V.screen=V.round&&V.round.mix?'theme':'theme';}
+  else if(V.screen==='result'||V.screen==='theme'||V.screen==='badges'){V.screen='home';}
+  render();
+});
+
+/* ============ SCHERMEN ============ */
+const fleurLogo=`<svg width="46" height="58" viewBox="0 0 40 56" aria-hidden="true"><path d="M20 3L22.2 12 26 30 33 53H27C25 46 22 42 20 42S15 46 13 53H7L14 30 17.8 12Z" fill="#f6c548" stroke="#1b2a6b" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 20h7M13 33h14M20 3v-1" stroke="#1b2a6b" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`;
+
+function viewHome(){
+  const done=doneList();const mixOk=done.length>=MIXMIN;
+  const first=!S.rounds;
+  let h=`<div class="screen"><div class="head">${fleurLogo}<div><h1>Allez, Frans!</h1><p>Oefen je woordjes, thema voor thema</p></div></div>
+  <div class="pills"><div class="pill">⭐ ${starsTotal()} <span style="opacity:.6;font-weight:700">/ 30</span></div><div class="pill">🔥 ${streak()} ${streak()===1?'dag':'dagen'}</div><div class="pill">🏅 ${Object.keys(S.badges).length}</div></div>`;
+  if(first)h+=`<div class="hint">Begin bij thema 1. Haal minstens 8 van de 10 goed, dan gaat het volgende thema open. Oefenen mag zo vaak je wilt.</div>`;
+  h+= mixOk
+   ?`<button class="mix" data-act="theme" data-n="mix"><span class="ico">🎨</span><span><strong>Mix</strong><small>Alles wat je al hebt gedaan door elkaar: thema ${done.length===1?done[0]:'1 t/m '+Math.max(...done)}</small></span></button>`
+   :`<button class="mix locked" data-act="mixlocked"><span class="ico">🎨</span><span><strong>Mix</strong><small>Rond ${MIXMIN} thema’s af om alles door elkaar te oefenen (nog ${MIXMIN-done.length})</small></span></button>`;
+  h+=`<div class="path">`+THEMES.map(t=>{
+    const lock=!unlocked(t.n),dn=isDone(t.n),st=(S.themes[t.n]&&S.themes[t.n].stars)||0;
+    const cls=lock?'locked':dn?'done':'open';
+    return `<button class="tc ${cls}" style="--c:${t.color}" data-act="theme" data-n="${t.n}" id="tc${t.n}">
+      <span class="num">${t.n}<i>${t.emoji}</i></span>
+      <span class="txt"><strong>${esc(t.name)}</strong><small>${t.sub?esc(t.sub)+' · ':''}${t.items.length} woorden${t.nums?' + telwoorden 1-100':''}</small><span class="stars">${stars(st,16)}</span></span>
+      <span class="st">${lock?'🔒':dn?'✓':'▶'}</span></button>`;
+  }).join('')+`</div></div>`;
+  return h;
+}
+
+function wordRows(t){
+  let h='';
+  Object.keys(GROUPS).forEach(g=>{
+    const its=t.items.filter(i=>i.t===g);if(!its.length)return;
+    h+=`<div class="wg">${GROUPS[g]}</div>`+its.map(i=>`<div class="card w"><div><b>${esc(i.fr)}</b><span>${esc(i.nl)}</span></div><button class="spk" data-act="say" data-t="${esc(speakText(i.fr))}" aria-label="Luister">🔊</button></div>`).join('');
+  });
+  if(t.nums){
+    h+=`<details class="card nums"><summary>Telwoorden 1-100</summary><div class="ng">`+Array.from({length:100},(_,k)=>`<span><b>${k+1}</b> ${frNum(k+1)}</span>`).join('')+`</div></details>`;
+  }
+  return h;
+}
+
+function viewTheme(){
+  const isMix=V.n==='mix';
+  let t,color,emoji,title,sub,info,nums,rounds,best,starsN,count;
+  if(isMix){
+    nums=doneList();color='#bfaef2';emoji='🎨';title='Mix';sub='Alles wat je al hebt gedaan door elkaar';
+    rounds=S.mix.rounds;best=S.mix.best;starsN=starsFor(best);count=MIXROUND;
+    info=`<div class="chiprow">`+nums.map(n=>`<span class="chip" style="background:${themeBy(n).color}">${n} ${themeBy(n).emoji}</span>`).join('')+`</div>`;
+  }else{
+    t=themeBy(V.n);nums=[t.n];color=t.color;emoji=t.emoji;title=t.name;sub=t.sub||('Thema '+t.n);
+    const st=S.themes[t.n]||{};rounds=st.rounds||0;best=st.best||0;starsN=st.stars||0;count=ROUND;info='';
+  }
+  let h=`<div class="screen"><button class="back" data-act="home">← Terug</button>
+  <div class="hero" style="--c:${color}"><div class="big">${emoji}</div><h2>${esc(title)}</h2><p>${esc(sub)}</p></div>
+  <div class="stats"><div class="card stat"><b>${rounds}</b><span>rondes</span></div><div class="card stat"><b>${Math.round(best*100)}%</b><span>beste score</span></div><div class="card stat"><div class="stars" style="justify-content:center;margin:4px 0 6px">${stars(starsN,20)}</div><span>sterren</span></div></div>${info}`;
+  if(!isMix&&!isDone(t.n))h+=`<div class="hint">Haal minstens ${Math.round(PASS*ROUND)} van de ${ROUND} goed om ${t.n<10?'thema '+(t.n+1)+' te openen':'dit thema af te ronden'}.</div>`;
+  else if(!isMix)h+=`<div class="hint" style="background:#dff5e9">Thema af! Je mag zoveel oefenen als je wilt.</div>`;
+  h+=`<button class="btn" data-act="start">Start oefenronde (${count} vragen)</button>`;
+  if(!isMix){
+    h+=`<h3 class="sec">Woordenlijst</h3>`+wordRows(t);
+  }else{
+    h+=`<p class="tiny">De mix kiest vooral woorden die je nog lastig vindt.</p>`;
+  }
+  return h+`</div>`;
+}
+
+function quizBody(q,r){
+  const first=r.firstTotal;
+  const cnt=q.retry?'Herhalen':(r.i+1)+'/'+first;
+  const pct=Math.min(r.i,first)/first*100;
+  const chip=q.num?'':`<span class="chip">${TYPELABEL[q.t]}</span>`;
+  const rep=q.retry?`<span class="chip rep">Nog een keer</span>`:'';
+  let h=`<div class="screen quiz"><div class="qtop"><button class="x" data-act="quit" aria-label="Stoppen">✕</button><div class="bar"><i style="width:${pct}%"></i></div><span class="cnt">${cnt}</span></div>
+  <div class="card qcard"><div class="chiprow" style="margin:0">${chip}${rep}</div><p class="qtitle">${q.title}</p>`;
+  const listenOnly=(q.kind==='listen'||q.listen);
+  if(listenOnly){
+    h+=`<div class="prompt"><button class="spk" data-act="sayq" style="width:76px;height:76px;font-size:32px" aria-label="Luister">🔊</button></div><button class="showw" data-act="showw">Toon het woord</button><div id="shown" class="prompt" style="display:none;padding-top:6px">${esc(q.prompt)}</div>`;
+  }else{
+    h+=`<div class="prompt ${q.promptCls}">${esc(q.prompt)}${q.promptCls==='fr'?`<button class="spk" data-act="sayq" aria-label="Luister">🔊</button>`:''}</div>`;
+  }
+  if(q.mode==='choice'){
+    h+=`<div class="opts">`+q.opts.map((o,i)=>`<button class="opt" data-act="pick" data-i="${i}">${esc(o)}</button>`).join('')+`</div>`;
+  }else{
+    h+=`<div class="typebox"><input id="ti" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" lang="fr" placeholder="Typ hier…"><button class="btn blue" data-act="check">OK</button></div>
+    <div class="accents">${['é','è','ê','à','â','ç','î','ô','û','œ'].map(c=>`<button data-act="ch" data-c="${c}" tabindex="-1">${c}</button>`).join('')}</div>`;
+  }
+  h+=`</div><div id="fbslot"></div></div>`;
+  return h;
+}
+
+function viewQuiz(){
+  const r=V.round,q=r.queue[r.i];
+  const h=quizBody(q,r);
+  setTimeout(()=>{
+    const ti=$('#ti');if(ti){ti.focus({preventScroll:true});ti.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();actions.check();}});}
+    if((q.kind==='listen'||q.listen)&&!q.noAuto)speak(q.speak);
+  },60);
+  return h;
+}
+
+function viewResult(){
+  const x=V.result;
+  const pct=Math.round(x.pct*100);
+  const msg=x.pct>=1?'Parfait! Alles goed!':x.pct>=.9?'Magnifique!':x.pct>=PASS?'Très bien, gehaald!':x.pct>=.5?'Bijna! Nog even oefenen.':'Niet erg, oefen nog een keer.';
+  let h=`<div class="screen res"><h2 style="font-size:28px;margin-top:6px">${msg}</h2>
+  <div class="big">${x.correct}/${x.total}</div><div>${pct}% goed</div>
+  <div class="bigstars">${stars(x.stars,54)}</div>`;
+  if(x.newlyDone&&x.theme)h+=`<p><b>Thema ${x.theme} af!</b>${x.theme<10?' Thema '+(x.theme+1)+' is nu open.':''}</p>`;
+  else if(!x.mix&&x.pct<PASS&&!isDone(x.theme))h+=`<p>Haal minstens ${Math.round(PASS*ROUND)} van de ${ROUND} goed om door te gaan.</p>`;
+  if(x.newBadges.length){
+    h+=`<h3 style="font-size:19px;margin-top:8px">Nieuwe badge${x.newBadges.length>1?'s':''}!</h3><div class="newb">`+x.newBadges.map((b,i)=>`<div class="card nb" style="animation-delay:${i*.15}s"><div class="bd" style="--c:${b.color}">${b.emoji}</div><b>${esc(b.name)}</b></div>`).join('')+`</div>`;
+  }
+  if(x.missed.length){
+    h+=`<div class="missed"><div class="wg">Nog even oefenen</div>`+x.missed.map(i=>`<div class="card w"><div><b>${esc(i.fr)}</b><span>${esc(i.nl)}</span></div><button class="spk" data-act="say" data-t="${esc(speakText(i.fr))}">🔊</button></div>`).join('')+`</div>`;
+  }
+  h+=`<button class="btn" data-act="again">Nog een ronde</button>`;
+  if(x.theme&&x.theme<10&&isDone(x.theme))h+=`<button class="btn blue" data-act="nexttheme">Naar thema ${x.theme+1}</button>`;
+  h+=`<button class="btn alt" data-act="home">Terug naar het pad</button></div>`;
+  return h;
+}
+
+function viewBadges(){
+  const got=Object.keys(S.badges).length;
+  return `<div class="screen"><div class="head"><div><h1>Badges</h1><p>${got} van ${BADGES.length} verdiend</p></div></div>
+  <div class="bgrid">`+BADGES.map(b=>{
+    const on=!!S.badges[b.id];
+    return `<div class="card badge ${on?'':'off'}"><div class="bd" style="--c:${b.color}">${on?b.emoji:'?'}</div><b>${esc(b.name)}</b><small>${esc(b.desc)}</small></div>`;
+  }).join('')+`</div>
+  <p class="tiny">${memOnly?'Let op: je voortgang kan op dit apparaat niet worden bewaard.':'Je voortgang staat op dit apparaat.'}</p>
+  <button class="btn alt" style="margin-top:18px" data-act="resetask">Voortgang wissen</button></div>`;
+}
+
+function renderNav(){
+  const quiz=V.screen==='quiz';
+  $('#nav').innerHTML=quiz?'':`<div class="nav"><div><button data-act="home" class="${V.screen!=='badges'?'on':''}"><span>🥐</span>Oefenen</button><button data-act="badges" class="${V.screen==='badges'?'on':''}"><span>🏅</span>Badges</button></div></div>`;
+}
+function render(){
+  const m={home:viewHome,theme:viewTheme,quiz:viewQuiz,result:viewResult,badges:viewBadges};
+  $('#app').innerHTML=(m[V.screen]||viewHome)();
+  renderNav();
+}
+
+/* ============ ACTIES ============ */
+function toast(t){
+  const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2600);
+}
+function confetti(){
+  const c=document.createElement('div');c.className='conf';const cols=['#2b4aa8','#ffffff','#e0414b','#f6c548'];
+  for(let i=0;i<48;i++){const p=document.createElement('i');p.style.cssText=`left:${Math.random()*100}%;background:${cols[i%4]};animation-delay:${Math.random()*.6}s;animation-duration:${2+Math.random()*1.6}s;transform:rotate(${Math.random()*360}deg)`;c.appendChild(p);}
+  document.body.appendChild(c);setTimeout(()=>c.remove(),4300);
+}
+function startRound(){
+  const mix=V.n==='mix';
+  const nums=mix?doneList():[V.n];
+  const qs=buildRound(nums,mix?MIXROUND:ROUND);
+  V.round={mix,theme:mix?null:V.n,nums,queue:qs,i:0,firstTotal:qs.length,correct:0,missed:[],answered:false};
+  V.screen='quiz';
+  try{history.pushState({s:'quiz'},'');}catch(e){}
+  render();window.scrollTo(0,0);
+}
+function finishRound(){
+  const r=V.round;
+  const pct=r.correct/r.firstTotal;
+  const res={correct:r.correct,total:r.firstTotal,pct,stars:starsFor(pct),mix:r.mix,theme:r.theme,newlyDone:false,missed:r.missed,newBadges:[]};
+  S.rounds++;S.correct+=r.correct;if(pct>=1)S.perfect++;
+  const d=today();if(!S.days.includes(d)){S.days.push(d);S.days=S.days.slice(-60);}
+  if(r.mix){S.mix.rounds++;S.mix.best=Math.max(S.mix.best,pct);}
+  else{
+    const t=S.themes[r.theme]||(S.themes[r.theme]={rounds:0,best:0,stars:0,done:false});
+    t.rounds++;t.best=Math.max(t.best,pct);t.stars=starsFor(t.best);
+    if(pct>=PASS&&!t.done){t.done=true;res.newlyDone=true;}
+  }
+  res.newBadges=checkBadges();
+  save();
+  V.result=res;V.screen='result';
+  try{history.pushState({s:'result'},'');}catch(e){}
+  render();window.scrollTo(0,0);
+  if(pct>=PASS)confetti();
+}
+function answered(ok,q,extra){
+  const r=V.round;r.answered=true;
+  const first=!q.retry;
+  if(first){
+    if(ok)r.correct++;
+    else{
+      if(q.item&&!r.missed.some(m=>m.key===q.item.key))r.missed.push(q.item);
+      const kinds=q.num?[q.kind==='n_d2fr'?'n_fr2d':'n_d2fr']:['fr2nl','nl2fr'];
+      const k=kinds[rnd(0,kinds.length-1)];
+      const copy=q.num?numQ(k,q.n):makeQ(q.item,k,new Set(r.nums));
+      copy.retry=true;copy.noAuto=true;r.queue.push(copy);
+    }
+    if(q.key){const w=S.words[q.key]||(S.words[q.key]={ok:0,miss:0});if(ok)w.ok++;else w.miss++;}
+    save();
+  }
+  const last=r.i>=r.queue.length-1;
+  const pair=q.num?`<b>${esc(q.n)}</b> = ${esc(frNum(q.n))}`:`<b>${esc(q.item.fr)}</b> = ${esc(q.item.nl)}`;
+  const pick=a=>a[rnd(0,a.length-1)];
+  const body=ok
+    ?`<h3>${pick(PHR_OK)}</h3><div class="row"><p>${pair}${extra||''}</p><button class="spk" data-act="sayq">🔊</button></div>`
+    :`<h3>${pick(PHR_BAD)}</h3><div class="row"><p>Het juiste antwoord is:<br>${pair}${q.retry?'':'<br><span style="font-size:13px">Je krijgt deze straks nog een keer.</span>'}</p><button class="spk" data-act="sayq">🔊</button></div>`;
+  $('#fbslot').innerHTML=`<div class="fb ${ok?'ok':'bad'}"><div>${body}<button class="btn ${ok?'ok':''}" data-act="next">${last?'Klaar':'Verder'}</button></div></div>`;
+  const ti=$('#ti');if(ti){ti.disabled=true;}
+  document.querySelectorAll('.typebox .btn,.accents button').forEach(b=>b.disabled=true);
+  setTimeout(()=>{const nb=document.querySelector('.fb .btn');if(nb)nb.focus({preventScroll:true});},50);
+}
+const actions={
+  home(){if(V.screen==='quiz'&&!V.round)return;V.screen='home';render();window.scrollTo(0,0);},
+  badges(){go('badges');},
+  theme(b){
+    const v=b.dataset.n;
+    if(v==='mix'){go('theme','mix');return;}
+    const n=+v;
+    if(!unlocked(n)){b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');toast('Rond eerst thema '+(n-1)+' af (minstens '+Math.round(PASS*ROUND)+' van de '+ROUND+' goed)');return;}
+    go('theme',n);
+  },
+  mixlocked(b){b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');toast('Rond eerst '+MIXMIN+' thema’s af');},
+  start(){startRound();},
+  again(){const r=V.result;V.n=r.mix?'mix':r.theme;startRound();},
+  nexttheme(){V.n=V.result.theme+1;V.screen='theme';render();window.scrollTo(0,0);},
+  say(b){speak(b.dataset.t);},
+  sayq(){const q=V.round.queue[V.round.i];speak(q.speak);},
+  showw(b){const e=$('#shown');if(e){e.style.display='flex';}b.style.display='none';},
+  quit(){
+    const bg=document.createElement('div');bg.className='sheetbg';
+    bg.innerHTML=`<div class="sheet"><h3>Stoppen?</h3><p>Deze ronde telt dan niet mee.</p><button class="btn" data-act="sheetclose">Doorgaan met oefenen</button><button class="btn alt" data-act="sheetquit">Stoppen</button></div>`;
+    document.body.appendChild(bg);
+  },
+  sheetclose(){document.querySelector('.sheetbg').remove();},
+  sheetquit(){document.querySelector('.sheetbg').remove();V.round=null;V.screen='theme';render();window.scrollTo(0,0);},
+  pick(b){
+    const r=V.round;if(r.answered)return;
+    const q=r.queue[r.i],i=+b.dataset.i;
+    const ok=q.opts[i]===q.answer;
+    document.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(q.opts[k]===q.answer)o.classList.add('good');});
+    if(!ok)b.classList.add('wrong');
+    answered(ok,q);
+  },
+  check(){
+    const r=V.round;if(!r||r.answered)return;
+    const q=r.queue[r.i],ti=$('#ti');if(!ti||!ti.value.trim()){return;}
+    const res=checkTyped(ti.value,q.answers);
+    ti.style.background=res.ok?'#c9f0dc':'#fbd3d6';
+    answered(res.ok,q,res.ok&&res.accent?`<br><span style="font-size:13px">Let op de accenten: ${esc(q.show)}</span>`:'');
+  },
+  ch(b){const ti=$('#ti');if(!ti||ti.disabled)return;const s=ti.selectionStart==null?ti.value.length:ti.selectionStart,e=ti.selectionEnd==null?s:ti.selectionEnd;ti.value=ti.value.slice(0,s)+b.dataset.c+ti.value.slice(e);ti.focus();const p=s+1;try{ti.setSelectionRange(p,p);}catch(x){}},
+  next(){
+    const r=V.round;if(!r||!r.answered)return;
+    r.i++;r.answered=false;
+    if(r.i>=r.queue.length){finishRound();return;}
+    render();window.scrollTo(0,0);
+  },
+  resetask(){
+    const bg=document.createElement('div');bg.className='sheetbg';
+    bg.innerHTML=`<div class="sheet"><h3>Alles wissen?</h3><p>Je thema’s, sterren en badges worden gewist. Dit kan niet terug.</p><button class="btn alt" data-act="sheetclose">Nee, bewaren</button><button class="btn" data-act="resetgo">Ja, alles wissen</button></div>`;
+    document.body.appendChild(bg);
+  },
+  resetgo(){S=blank();save();document.querySelector('.sheetbg').remove();V.screen='home';render();toast('Voortgang gewist');}
+};
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const a=actions[b.dataset.act];if(a)a(b,e);
+});
+render();
+</script>
+</body>
+</html>
