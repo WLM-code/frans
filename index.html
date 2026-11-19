@@ -181,6 +181,49 @@ details.nums summary::after{content:" ▾"}
 .toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);z-index:95;background:var(--ink);color:#fff;border-radius:14px;padding:10px 16px;font-size:14px;max-width:88vw;text-align:center;animation:in .2s ease both}
 .tiny{font-size:13px;opacity:.7;text-align:center;margin-top:18px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---- uitbreiding: richting, oefenvormen, flitskaarten, praten, zinnen ---- */
+.dirs{display:flex;gap:8px;margin:0 0 14px}
+.dirs button{flex:1;border:1.5px solid var(--ink);border-radius:14px;background:var(--card);font-weight:900;font-size:13px;padding:8px 4px;min-height:48px;line-height:1.15}
+.dirs button.on{background:var(--mustard);box-shadow:0 3px 0 var(--ink)}
+.dlabel{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;opacity:.65;margin:4px 0 6px}
+.mode{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:12px 14px;margin-bottom:12px;background:var(--card);border:1.5px solid var(--ink);border-radius:20px;box-shadow:3px 3px 0 var(--ink);transition:transform .08s}
+.mode:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.mi{flex:none;width:54px;height:54px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;font-size:26px}
+.mt strong{display:block;font-size:18px}
+.mt small{display:block;font-size:13px;opacity:.75;line-height:1.3;margin-top:2px}
+.go{margin-left:auto;font-size:28px;font-weight:900;line-height:1}
+.fcwrap{perspective:1000px;-webkit-perspective:1000px;margin:6px 0 18px}
+.fc{position:relative;height:310px;transition:transform .5s;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;cursor:pointer}
+.fc.flip{transform:rotateY(180deg)}
+.face{position:absolute;top:0;left:0;right:0;bottom:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1.5px solid var(--ink);border-radius:26px;box-shadow:4px 4px 0 var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;text-align:center}
+.face.front{background:var(--card)}
+.face.back{background:var(--c,var(--mustard));transform:rotateY(180deg);-webkit-transform:rotateY(180deg)}
+.face b{font-family:'Fraunces',Georgia,serif;font-size:34px;line-height:1.15;word-break:break-word;font-weight:900}
+.face b.nlw{font-family:'Nunito',sans-serif;font-size:30px}
+.face small{font-size:12px;opacity:.7;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.fbtns{display:flex;gap:12px}
+.fbtns .btn{margin:0}
+.fbtns.hid{visibility:hidden}
+.mic{text-align:center;padding:4px 0 0}
+.micbtn{width:96px;height:96px;border-radius:50%;border:1.5px solid var(--ink);background:var(--red);color:#fff;font-size:40px;box-shadow:0 5px 0 var(--ink);padding:0}
+.micbtn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}
+.micbtn.on{background:var(--ok);animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.07)}}
+.micst{min-height:46px;margin:14px 0 0;font-size:15px;line-height:1.3}
+.answerrow{min-height:64px;border:1.5px dashed var(--ink);border-radius:16px;background:#fff;padding:8px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-content:flex-start}
+.bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px}
+.tile{border:1.5px solid var(--ink);border-radius:12px;background:var(--mustard);font-weight:800;font-size:17px;padding:8px 12px;box-shadow:0 3px 0 var(--ink);min-height:44px}
+.tile.sel{background:#fff}
+.tile.ghost{visibility:hidden}
+.miss{background:#ffc9ce;border-radius:3px;text-decoration:underline wavy var(--bad)}
+.typed{font-size:14px;margin:0 0 6px}
+.prompt.sent{font-size:23px;line-height:1.3}
+.prompt.fr.sent{font-family:'Fraunces',Georgia,serif;font-size:25px}
+.note{font-size:13px;background:#fff6d6;border:1.5px dashed var(--ink);border-radius:12px;padding:8px 10px;margin:0 0 10px}
+.chip.m{background:#dff5e9}
+.fb .typed,.fb .typed b{font-family:'Nunito',sans-serif}
+.fb .row .fbtxt{flex:1;min-width:0;margin:0 0 12px;font-size:16px}
+.fb .typed{margin:0 0 8px}
 </style>
 </head>
 <body>
@@ -434,9 +477,114 @@ depuis|sinds`}
 ];
 const GROUPS={p:'Voornaamwoorden',w:'Werkwoorden',z:'Naamwoorden',o:'Overige woorden'};
 const TYPELABEL={p:'voornaamwoord',w:'werkwoord',z:'naamwoord',o:'woord of zin'};
-const PASS=0.8, ROUND=10, MIXROUND=15, MIXMIN=2;
+const PASS=0.8;
 const KEY='allez_frans_v1';
 
+const SENTS_RAW={
+1:`Bonjour madame !|Goedendag mevrouw!
+Bonsoir monsieur !|Goedenavond meneer!
+Excusez-moi, vous parlez anglais ?|Neem me niet kwalijk, spreekt u Engels?
+Oui, je parle français.|Ja, ik spreek Frans.
+Non, je ne parle pas anglais.|Nee, ik spreek geen Engels.
+Merci, au revoir !|Dank je wel, tot ziens!
+Pardon, je ne parle pas français.|Sorry, ik spreek geen Frans.
+Une bonne journée et une bonne soirée !|Een fijne dag en een fijne avond!
+Bonjour monsieur, je peux, s’il vous plaît ?|Goedendag meneer, mag ik, alstublieft?`,
+2:`Salut ! Comment ça va ?|Hoi! Hoe gaat het?
+Ça va très bien, merci.|Het gaat heel goed, dank je wel.
+Ça va mal.|Het gaat slecht.
+Je m’appelle Anna.|Ik heet Anna.
+Comment tu t’appelles ?|Hoe heet jij?
+Comment allez-vous ?|Hoe gaat het met u?
+Enchanté ! Et toi ?|Aangenaam! En jij?
+Bonne nuit, à demain !|Goede nacht, tot morgen!
+Moi aussi, ça va bien.|Ik ook, het gaat goed.
+Ça va un petit peu mal.|Het gaat een beetje slecht.`,
+3:`Je voudrais un café, s’il vous plaît.|Ik wil graag een koffie, alstublieft.
+Vous avez un menu ?|Hebt u een menukaart?
+Une table pour une personne, s’il vous plaît.|Een tafel voor één persoon, alstublieft.
+Je voudrais un thé ou un café.|Ik wil graag een thee of een koffie.
+Un jus de pomme et un croissant.|Een appelsap en een croissant.
+Je voudrais manger un sandwich.|Ik wil graag een broodje eten.
+Je voudrais boire un jus d’orange.|Ik wil graag een sinaasappelsap drinken.
+C’est parfait, merci !|Dat is perfect, dank je wel!
+Je voudrais seulement une crêpe.|Ik wil graag alleen maar een pannenkoek.
+Un soda, s’il vous plaît.|Een frisdrank, alstublieft.`,
+4:`Combien ça coûte ?|Hoeveel kost het?
+Ça fait dix euros.|Dat maakt tien euro.
+Je peux payer par carte ?|Kan ik met pin betalen?
+Je voudrais payer en espèces.|Ik wil graag contant betalen.
+Ça coûte un euro cinquante.|Het kost één euro vijftig.
+Ensemble, ça fait quinze euros.|Samen maakt dat vijftien euro.
+J’ai vingt euros.|Ik heb twintig euro.
+D’accord, merci !|Akkoord, dank je wel!
+J’ai un centime.|Ik heb een cent.`,
+5:`Quel âge as-tu ?|Hoe oud ben jij?
+J’ai douze ans.|Ik ben twaalf jaar oud.
+D’où viens-tu ?|Waar kom jij vandaan?
+Je viens de Paris.|Ik kom uit Parijs.
+Tu parles néerlandais ?|Spreek jij Nederlands?
+Quelle langue parlez-vous ?|Welke taal spreekt u?
+Vous êtes belge ?|Bent u Belg?
+Où est Liège ?|Waar is Luik?
+Il parle allemand et espagnol.|Hij spreekt Duits en Spaans.
+Tu viens de Londres ou de Berlin ?|Kom jij uit Londen of uit Berlijn?
+Tu es néerlandaise ?|Ben jij Nederlandse?`,
+6:`Je cherche la pharmacie.|Ik zoek de apotheek.
+Vous cherchez le supermarché ?|Zoekt u de supermarkt?
+La boulangerie est là-bas.|De bakkerij is daar.
+Le restaurant est à droite.|Het restaurant is rechts.
+Le magasin est à gauche.|De winkel is links.
+Il y a une pharmacie près d’ici.|Er is een apotheek hier dichtbij.
+C’est loin, mais c’est ouvert.|Het is ver, maar het is open.
+Le supermarché est fermé.|De supermarkt is gesloten.
+Elle cherche le restaurant.|Zij zoekt het restaurant.
+Il cherche la boulangerie.|Hij zoekt de bakkerij.`,
+7:`Je voudrais réserver un ticket.|Ik wil graag een kaartje reserveren.
+Le musée est fermé le lundi.|Het museum is op maandag gesloten.
+Aujourd’hui, le restaurant est ouvert.|Vandaag is het restaurant open.
+Je réserve une table ce soir.|Ik reserveer vanavond een tafel.
+Demain, c’est samedi.|Morgen is het zaterdag.
+Le musée est ouvert de dix heures à six heures.|Het museum is open van tien uur tot zes uur.
+Le musée est ouvert du lundi au vendredi.|Het museum is open van maandag tot vrijdag.
+Alors, mercredi ou jeudi ?|Dus, woensdag of donderdag?
+Je voudrais un ticket pour le musée.|Ik wil graag een kaartje voor het museum.
+Le dimanche, c’est fermé.|Op zondag is het gesloten.`,
+8:`Ma mère s’appelle Marie.|Mijn moeder heet Marie.
+Mon père est grand.|Mijn vader is groot.
+J’ai un frère et une sœur.|Ik heb een broer en een zus.
+Mes parents sont gentils.|Mijn ouders zijn aardig.
+Ma sœur est petite et marrante.|Mijn zus is klein en grappig.
+Ils parlent avec mon frère.|Zij praten met mijn broer.
+Mes parents sont en vacances.|Mijn ouders zijn op vakantie.
+Il s’appelle Paul et elle s’appelle Julie.|Hij heet Paul en zij heet Julie.
+Qui est ton frère ?|Wie is jouw broer?
+Mon frère est seul.|Mijn broer is alleen.
+Ils s’appellent Paul et Julie.|Zij heten Paul en Julie.`,
+9:`J’aime la robe rouge.|Ik hou van de rode jurk.
+Tu aimes le jean bleu ?|Hou jij van de blauwe spijkerbroek?
+Je voudrais essayer le t-shirt blanc.|Ik wil graag het witte t-shirt passen.
+La cabine d’essayage est à gauche.|De paskamer is links.
+Quelle taille ?|Welke maat?
+La jupe est trop longue.|De rok is te lang.
+Le short est trop cher.|De korte broek is te duur.
+Je cherche une robe plus courte.|Ik zoek een kortere jurk.
+Les t-shirts verts sont moins chers.|De groene t-shirts zijn minder duur.
+Vous aimez la jupe verte ?|Houdt u van de groene rok?
+Ils aiment le jean noir.|Zij houden van de zwarte spijkerbroek.`,
+10:`Nous sommes copains.|Wij zijn vrienden.
+Ma copine s’appelle Léa.|Mijn vriendin heet Léa.
+On se connaît depuis la maternelle.|We kennen elkaar sinds de kleuterschool.
+On se voit à l’école.|We zien elkaar op school.
+Nous parlons français avec le voisin.|Wij spreken Frans met de buurman.
+Nous avons un voisin gentil.|Wij hebben een aardige buurman.
+Mon voisin vient de Paris.|Mijn buurman komt uit Parijs.
+Léa est ma meilleure copine.|Léa is mijn beste vriendin.
+Nous nous appelons Léa et Paul.|Wij heten Léa en Paul.
+Nous aimons la voisine.|Wij houden van de buurvrouw.`
+};
+
+const SENTS=[];
 /* parse */
 const THEMES=THEMES_RAW.map(t=>{
   let cur='o';const items=[];
@@ -445,9 +593,11 @@ const THEMES=THEMES_RAW.map(t=>{
     if(l[0]==='#'){cur=l[1];return;}
     const [fr,nl,alt]=l.split('|');
     const plain=fr.replace(/\s*\([^)]*\)/g,'');
-    items.push({th:t.n,t:cur,fr,nl,alt:alt?[alt]:[],key:fr+'|'+nl,typable:!/[…,]/.test(plain)});
+    items.push({th:t.n,t:cur,fr,nl,alt:alt?[alt]:[],key:fr+'|'+nl,typable:!/…/.test(fr)});
   });
-  return Object.assign({},t,{items});
+  const sents=(SENTS_RAW[t.n]||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const p=l.split('|');return {th:t.n,fr:p[0],nl:p[1],alt:p[2]?p[2].split('~'):[],key:'s:'+p[0]};});
+  sents.forEach(x=>SENTS.push(x));
+  return Object.assign({},t,{items,sents});
 });
 const ITEMS=THEMES.flatMap(t=>t.items);
 const themeBy=n=>THEMES[n-1];
@@ -488,8 +638,14 @@ function speakText(fr){
 if('speechSynthesis' in window)try{speechSynthesis.getVoices();}catch(e){}
 
 /* antwoorden controleren */
-const strictN=s=>s.toLowerCase().replace(/[’‘`´]/g,"'").replace(/[-]/g,' ').replace(/[.!?,;:]/g,'').replace(/\s+/g,' ').trim();
-const looseN=s=>strictN(s).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/œ/g,'oe');
+const strictN=s=>s.toLowerCase().replace(/[’‘`´]/g,"'").replace(/œ/g,'oe').replace(/-/g,' ').replace(/[.!?,;:¿¡"“”]/g,'').replace(/\s+/g,' ').trim();
+const looseN=s=>strictN(s).normalize('NFD').replace(/[̀-ͯ]/g,'');
+function lev(a,b){
+  const n=a.length,m=b.length;if(!n)return m;if(!m)return n;
+  let prev=Array.from({length:m+1},(_,j)=>j);
+  for(let i=1;i<=n;i++){const cur=[i];for(let j=1;j<=m;j++)cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=cur;}
+  return prev[m];
+}
 function variants(fr,alt){
   const out=new Set();
   [fr].concat(alt||[]).forEach(s=>{
@@ -503,22 +659,72 @@ function variants(fr,alt){
   });
   return [...out];
 }
+/* typen: spelling moet kloppen, ook de accenten */
 function checkTyped(input,answers){
   const i=strictN(input);if(!i)return null;
-  const ls=answers.map(strictN),ll=answers.map(looseN);
-  if(ls.includes(i))return {ok:true,accent:false};
-  if(ll.includes(looseN(input)))return {ok:true,accent:true};
+  if(answers.map(strictN).includes(i))return {ok:true};
+  if(answers.map(looseN).includes(looseN(input)))return {ok:false,near:'accent'};
   return {ok:false};
 }
+function closest(typed,answers){
+  const t=strictN(typed);let best=answers[0],bd=1e9;
+  answers.forEach(a=>{const d=lev(t,strictN(a));if(d<bd){bd=d;best=a;}});
+  return best;
+}
+function diffHTML(typed,correct){
+  const a=typed.replace(/['‘`´]/g,'’').toLowerCase(),b=correct;
+  const n=a.length,m=b.length;
+  const d=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+  for(let i=0;i<=n;i++)d[i][0]=i;for(let j=0;j<=m;j++)d[0][j]=j;
+  const eq=(i,j)=>a[i-1]===b[j-1].toLowerCase();
+  for(let i=1;i<=n;i++)for(let j=1;j<=m;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(eq(i,j)?0:1));
+  const ok=new Array(m).fill(false);let i=n,j=m;
+  while(i>0||j>0){
+    if(i>0&&j>0&&d[i][j]===d[i-1][j-1]+(eq(i,j)?0:1)){if(eq(i,j))ok[j-1]=true;i--;j--;}
+    else if(j>0&&d[i][j]===d[i][j-1]+1)j--;
+    else i--;
+  }
+  return [...b].map((ch,k)=>ok[k]?esc(ch):`<span class="miss">${esc(ch)}</span>`).join('');
+}
+/* praten: spraakherkenning, iets ruimer dan typen */
+function checkSpoken(alts,answers,sent,digits){
+  const L=answers.map(looseN);
+  for(const a of alts){const la=looseN(a);if(digits&&la===digits)return true;if(L.includes(la))return true;}
+  for(const a of alts){
+    const la=looseN(a);
+    for(const t of L){
+      const d=lev(la,t),mx=Math.max(la.length,t.length);
+      if(sent?(d/mx<=.15):(t.length>=6&&d<=1))return true;
+    }
+  }
+  return false;
+}
+const SRC=window.SpeechRecognition||window.webkitSpeechRecognition;
+const canSpeak=!!SRC;
+let curRec=null;
+function startListening(cb){
+  let done=false;const fin=x=>{if(!done){done=true;cb(x);}};
+  try{
+    const rec=new SRC();curRec=rec;
+    rec.lang='fr-FR';rec.interimResults=false;rec.maxAlternatives=5;rec.continuous=false;
+    rec.onresult=e=>{const alts=[];for(let k=0;k<e.results.length;k++){const r=e.results[k];for(let i=0;i<r.length;i++)alts.push(r[i].transcript);}fin({alts});};
+    rec.onerror=e=>fin({error:(e&&e.error)||'error'});
+    rec.onend=()=>fin({error:'no-speech'});
+    rec.start();
+  }catch(e){fin({error:'unsupported'});}
+}
+function stopListening(){try{if(curRec)curRec.abort();}catch(e){}curRec=null;}
 
 /* ============ OPSLAG ============ */
-const blank=()=>({v:1,themes:{},words:{},mix:{rounds:0,best:0},correct:0,rounds:0,perfect:0,badges:{},days:[]});
+const blank=()=>({v:2,themes:{},words:{},mix:{rounds:0,best:0},correct:0,rounds:0,perfect:0,badges:{},days:[],flashDecks:0,sentGood:0,spoken:0,dir:'both'});
 let S=blank(),memOnly=false;
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(blank(),JSON.parse(r));}catch(e){memOnly=true;}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const T=n=>{S.themes[n]=Object.assign({rounds:0,best:0,stars:0,done:false,flash:0,sentBest:0,sentRounds:0,touched:false},S.themes[n]||{});return S.themes[n];};
 const isDone=n=>!!(S.themes[n]&&S.themes[n].done);
 const unlocked=n=>n===1||isDone(n-1);
 const doneList=()=>THEMES.filter(t=>isDone(t.n)).map(t=>t.n);
+const practicedList=()=>THEMES.filter(t=>{const x=S.themes[t.n];return x&&(x.touched||x.rounds||x.flash||x.sentRounds);}).map(t=>t.n);
 const starsTotal=()=>THEMES.reduce((a,t)=>a+((S.themes[t.n]&&S.themes[t.n].stars)||0),0);
 function streak(){
   const set=new Set(S.days);let d=new Date(),n=0;
@@ -527,20 +733,22 @@ function streak(){
   while(set.has(f(d))){n++;d.setDate(d.getDate()-1);}
   return n;
 }
+function streakOf(s){const keep=S;S=s;const r=streak();S=keep;return r;}
 
-/* badges */
 const BADGES=[
  ...THEMES.map(t=>({id:'t'+t.n,name:t.badge,emoji:t.emoji,color:t.color,desc:'Rond thema '+t.n+' af',test:s=>!!(s.themes[t.n]&&s.themes[t.n].done)})),
  {id:'first',name:'Premier pas',emoji:'🥖',color:'#f6c548',desc:'Maak je eerste ronde',test:s=>s.rounds>=1},
  {id:'parfait',name:'Parfait!',emoji:'💯',color:'#f6a9b9',desc:'Alles goed in één ronde',test:s=>s.perfect>=1},
- {id:'mix',name:'Mix-meester',emoji:'🎨',color:'#bfaef2',desc:'Haal 80% in een mix',test:s=>s.mix.best>=PASS},
+ {id:'mix',name:'Herhaal-held',emoji:'🔁',color:'#bfaef2',desc:'Haal 80% bij Herhaal alles',test:s=>s.mix.best>=PASS},
+ {id:'flash5',name:'Flash!',emoji:'⚡',color:'#f6c548',desc:'5 stapels flitskaarten af',test:s=>s.flashDecks>=5},
+ {id:'sent3',name:'Phrase!',emoji:'✍️',color:'#8ec5ee',desc:'3 zinnenrondes met 80%',test:s=>s.sentGood>=3},
+ {id:'talk25',name:'Parlez-vous?',emoji:'🎤',color:'#f6a9b9',desc:'25 woorden goed uitgesproken',test:s=>s.spoken>=25},
  {id:'c100',name:'Bibliothèque',emoji:'📚',color:'#8ec5ee',desc:'100 goede antwoorden',test:s=>s.correct>=100},
  {id:'c500',name:'Dictionnaire',emoji:'📖',color:'#86d4b4',desc:'500 goede antwoorden',test:s=>s.correct>=500},
  {id:'s3',name:'Trois jours',emoji:'🔥',color:'#f5a05c',desc:'3 dagen achter elkaar',test:s=>streakOf(s)>=3},
  {id:'s7',name:'Une semaine',emoji:'🌟',color:'#6fd0d8',desc:'7 dagen achter elkaar',test:s=>streakOf(s)>=7},
  {id:'tour',name:'Tour de France',emoji:'🏆',color:'#f6c548',desc:'Alle 10 thema’s af',test:s=>THEMES.every(t=>s.themes[t.n]&&s.themes[t.n].done)}
 ];
-function streakOf(s){const keep=S;S=s;const r=streak();S=keep;return r;}
 function checkBadges(){
   const fresh=[];
   BADGES.forEach(b=>{if(!S.badges[b.id]&&b.test(S)){S.badges[b.id]=Date.now();fresh.push(b);}});
@@ -548,24 +756,22 @@ function checkBadges(){
 }
 
 /* ============ VRAGEN ============ */
-function weightedSample(pool,n){
-  const arr=pool.map(it=>{const w=S.words[it.key]||{ok:0,miss:0};return {it,w:(1+1.5*Math.min(3,w.miss))/(1+.1*Math.min(10,w.ok))};});
-  const out=[];
-  while(out.length<n&&arr.length){
-    const tot=arr.reduce((a,x)=>a+x.w,0);let r=Math.random()*tot,i=0;
-    for(;i<arr.length;i++){r-=arr[i].w;if(r<=0)break;}
-    if(i>=arr.length)i=arr.length-1;
-    out.push(arr.splice(i,1)[0].it);
-  }
-  return out;
-}
+const DIRS={both:'Beide kanten',fr2nl:'Frans → Nederlands',nl2fr:'Nederlands → Frans'};
+const itemsFor=nums=>{
+  let items=ITEMS.filter(i=>nums.includes(i.th));
+  if(nums.length>1){const seen=new Set();items=items.filter(i=>!seen.has(i.fr)&&seen.add(i.fr));}
+  return items;
+};
+const sentsFor=nums=>SENTS.filter(s=>nums.includes(s.th));
+const numExtra=(nums)=>nums.includes(4)?(nums.length>1?6:8):0;
+const dirsFor=(dir,multi)=>dir==='both'?(multi?[Math.random()<.5?'fr2nl':'nl2fr']:['fr2nl','nl2fr']):[dir];
+function wordQCount(nums,dir){const multi=nums.length>1;return itemsFor(nums).length*dirsFor(dir,multi).length+numExtra(nums);}
+function sentQCount(nums,dir){const multi=nums.length>1;return sentsFor(nums).length*dirsFor(dir,multi).length;}
+
 function distract(item,pool,field,count){
   const used=new Set([item[field]]);const res=[];
   const inPool=ITEMS.filter(i=>pool.has(i.th));
-  const lists=[
-    shuffle(inPool.filter(i=>i.t===item.t)),shuffle(inPool),
-    shuffle(ITEMS.filter(i=>i.t===item.t)),shuffle(ITEMS)
-  ];
+  const lists=[shuffle(inPool.filter(i=>i.t===item.t)),shuffle(inPool),shuffle(ITEMS.filter(i=>i.t===item.t)),shuffle(ITEMS)];
   for(const l of lists){
     for(const c of l){
       if(res.length>=count)return res;
@@ -581,12 +787,11 @@ function makeQ(item,kind,pool){
     q.mode='choice';q.answer=item.nl;q.opts=shuffle([item.nl,...distract(item,pool,'nl',3)]);
     q.title=kind==='listen'?'Luister en kies de betekenis':'Wat betekent dit?';
     q.prompt=item.fr;q.promptCls='fr';
-  }else if(kind==='nl2fr'){
+  }else if(kind==='nl2fr_c'){
     q.mode='choice';q.answer=item.fr;q.opts=shuffle([item.fr,...distract(item,pool,'fr',3)]);
-    q.title='Hoe zeg je dit in het Frans?';q.prompt=item.nl;q.promptCls='nl';q.noSpeakPrompt=true;
-  }else{
-    q.mode='type';q.answers=variants(item.fr,item.alt);q.show=item.fr;
-    q.title='Typ het in het Frans';q.prompt=item.nl;q.promptCls='nl';q.noSpeakPrompt=true;
+    q.title='Hoe zeg je dit in het Frans?';q.prompt=item.nl;q.promptCls='nl';
+  }else{ /* nl2fr: praten of typen */
+    q.prod=true;q.answers=variants(item.fr,item.alt);q.show=item.fr;q.prompt=item.nl;q.promptCls='nl';
   }
   return q;
 }
@@ -594,9 +799,10 @@ function numQ(kind,n){
   n=n||rnd(1,100);
   const q={kind,num:true,n,t:'o',key:null,speak:frNum(n),item:null};
   if(kind==='n_d2fr'){
-    q.mode='type';q.answers=[frNum(n)];q.show=frNum(n);q.title='Typ het getal in het Frans';q.prompt=String(n);q.promptCls='num';q.noSpeakPrompt=true;
+    q.prod=true;q.answers=[frNum(n)];q.show=frNum(n);q.prompt=String(n);q.promptCls='num';
   }else{
-    const set=new Set([n]);const cand=shuffle([n+1,n-1,n+2,n-2,n+10,n-10,n+5,n-5,(n%10)*10+Math.floor(n/10),n+20,n-20].filter(x=>x>=1&&x<=100));
+    const set=new Set([n]);
+    const cand=shuffle([n+1,n-1,n+2,n-2,n+10,n-10,n+5,n-5,(n%10)*10+Math.floor(n/10),n+20,n-20].filter(x=>x>=1&&x<=100));
     const d=[];for(const c of cand){if(!set.has(c)){set.add(c);d.push(c);}if(d.length===3)break;}
     while(d.length<3){const c=rnd(1,100);if(!set.has(c)){set.add(c);d.push(c);}}
     q.mode='choice';q.answer=String(n);q.opts=shuffle([n,...d].map(String));
@@ -605,34 +811,75 @@ function numQ(kind,n){
   }
   return q;
 }
-function pickKind(item,canListen){
-  const bag=['fr2nl','fr2nl','fr2nl','nl2fr','nl2fr','nl2fr'];
-  if(item.typable)bag.push('type','type');
-  if(canListen)bag.push('listen','listen');
-  return bag[rnd(0,bag.length-1)];
+const PROPER=new Set(['Paris','Londres','Berlin','Liège','Luik','Londen','Berlijn','Parijs','Anna','Marie','Paul','Julie','Léa']);
+function tokens(s){
+  const t=s.replace(/[.!?,;:]/g,' ').split(/\s+/).filter(Boolean);
+  if(t.length&&!PROPER.has(t[0]))t[0]=t[0].charAt(0).toLowerCase()+t[0].slice(1);
+  return t;
 }
-function buildRound(nums,count){
-  const pool=new Set(nums);
-  let items=ITEMS.filter(i=>pool.has(i.th));
-  if(nums.length>1){const seen=new Set();items=items.filter(i=>!seen.has(i.fr)&&seen.add(i.fr));}
-  const withNums=nums.includes(4);
-  const numCount=withNums?(nums.length===1?3:2):0;
-  const chosen=weightedSample(items,count-numCount);
-  const canL=listenOK();
-  const qs=chosen.map(it=>{
-    const q=makeQ(it,pickKind(it,canL),pool);
-    if(q.kind==='listen'&&!canL)q.kind='fr2nl';
-    return q;
+function distractTokens(target,lang,th,n){
+  const have=new Set(target.map(x=>x.toLowerCase()));
+  const own=[],other=[];
+  SENTS.forEach(s=>{tokens(s[lang]).forEach(w=>{const lw=w.toLowerCase();if(have.has(lw))return;(s.th===th?own:other).push(w);});});
+  const seen=new Set(),out=[];
+  shuffle(own).concat(shuffle(other)).forEach(w=>{const lw=w.toLowerCase();if(out.length<n&&!seen.has(lw)){seen.add(lw);out.push(w);}});
+  return out;
+}
+function makeSentQ(s,kind){
+  const q={kind,sentObj:s,sent:true,key:s.key,t:'o',speak:speakText(s.fr)};
+  if(kind==='s_fr2nl'){
+    q.mode='tiles';q.prompt=s.fr;q.promptCls='fr sent';
+    q.target=tokens(s.nl);q.targets=[q.target].concat(s.alt.map(tokens));q.show=s.nl;
+    q.bank=shuffle(q.target.concat(distractTokens(q.target,'nl',s.th,2)).map((t,i)=>({id:i,t})));
+    q.title='Vertaal de zin: tik de woorden in de goede volgorde';
+  }else{
+    q.prod=true;q.prompt=s.nl;q.promptCls='nl sent';q.answers=[s.fr];q.show=s.fr;
+  }
+  return q;
+}
+function spread(a){
+  for(let i=1;i<a.length;i++){
+    if(a[i].key&&a[i].key===a[i-1].key){
+      let j=i+1;while(j<a.length&&a[j].key===a[i-1].key)j++;
+      if(j<a.length){const x=a[i];a[i]=a[j];a[j]=x;}
+    }
+  }
+  return a;
+}
+function buildWords(nums,dir){
+  const pool=new Set(nums),multi=nums.length>1,canL=listenOK(),qs=[];
+  itemsFor(nums).forEach(it=>{
+    dirsFor(dir,multi).forEach(d=>{
+      if(d==='fr2nl')qs.push(makeQ(it,(canL&&Math.random()<.25)?'listen':'fr2nl',pool));
+      else qs.push(makeQ(it,it.typable?'nl2fr':'nl2fr_c',pool));
+    });
   });
-  const nk=['n_fr2d','n_d2fr',canL?'n_listen':'n_fr2d'];
-  for(let i=0;i<numCount;i++)qs.push(numQ(nk[i%nk.length]));
-  return shuffle(qs);
+  const ne=numExtra(nums);
+  for(let i=0;i<ne;i++){
+    const d=dir==='both'?(i%2?'nl2fr':'fr2nl'):dir;
+    qs.push(numQ(d==='fr2nl'?((canL&&i%4===0)?'n_listen':'n_fr2d'):'n_d2fr'));
+  }
+  return spread(shuffle(qs));
+}
+function buildSent(nums,dir){
+  const multi=nums.length>1,qs=[];
+  sentsFor(nums).forEach(s=>dirsFor(dir,multi).forEach(d=>qs.push(makeSentQ(s,d==='fr2nl'?'s_fr2nl':'s_nl2fr'))));
+  return spread(shuffle(qs));
+}
+function cloneQ(q,pool){
+  let c;
+  if(q.num)c=numQ(q.kind,q.n);
+  else if(q.sent)c=makeSentQ(q.sentObj,q.kind);
+  else c=makeQ(q.item,q.kind,pool);
+  c.retry=true;c.tries=(q.tries||0)+1;c.noAuto=true;
+  return c;
 }
 
-/* ============ STATUS VAN HET SCHERM ============ */
-let V={screen:'home',n:null,round:null,result:null};
+/* ============ SCHERMSTATUS ============ */
+let V={screen:'home',n:null,round:null,result:null,flash:null};
 const PHR_OK=['Bravo!','Très bien!','Magnifique!','Excellent!','Super!','Parfait!','Génial!'];
 const PHR_BAD=['Pas tout à fait','Presque!','Courage!','Dommage!','Pas grave!'];
+const pickOne=a=>a[rnd(0,a.length-1)];
 
 function go(screen,n){
   V.screen=screen;if(n!==undefined)V.n=n;
@@ -640,8 +887,9 @@ function go(screen,n){
   render();window.scrollTo(0,0);
 }
 window.addEventListener('popstate',()=>{
-  if(V.screen==='quiz'){V.screen=V.round&&V.round.mix?'theme':'theme';}
-  else if(V.screen==='result'||V.screen==='theme'||V.screen==='badges'){V.screen='home';}
+  stopListening();
+  if(V.screen==='quiz'||V.screen==='flash'||V.screen==='flashres'){V.screen=V.n?'theme':'home';}
+  else if(V.screen!=='home')V.screen='home';
   render();
 });
 
@@ -649,14 +897,14 @@ window.addEventListener('popstate',()=>{
 const fleurLogo=`<svg width="46" height="58" viewBox="0 0 40 56" aria-hidden="true"><path d="M20 3L22.2 12 26 30 33 53H27C25 46 22 42 20 42S15 46 13 53H7L14 30 17.8 12Z" fill="#f6c548" stroke="#1b2a6b" stroke-width="2" stroke-linejoin="round"/><path d="M16.5 20h7M13 33h14M20 3v-1" stroke="#1b2a6b" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`;
 
 function viewHome(){
-  const done=doneList();const mixOk=done.length>=MIXMIN;
-  const first=!S.rounds;
+  const pr=practicedList();
+  const first=!S.rounds&&!pr.length;
   let h=`<div class="screen"><div class="head">${fleurLogo}<div><h1>Allez, Frans!</h1><p>Oefen je woordjes, thema voor thema</p></div></div>
   <div class="pills"><div class="pill">⭐ ${starsTotal()} <span style="opacity:.6;font-weight:700">/ 30</span></div><div class="pill">🔥 ${streak()} ${streak()===1?'dag':'dagen'}</div><div class="pill">🏅 ${Object.keys(S.badges).length}</div></div>`;
-  if(first)h+=`<div class="hint">Begin bij thema 1. Haal minstens 8 van de 10 goed, dan gaat het volgende thema open. Oefenen mag zo vaak je wilt.</div>`;
-  h+= mixOk
-   ?`<button class="mix" data-act="theme" data-n="mix"><span class="ico">🎨</span><span><strong>Mix</strong><small>Alles wat je al hebt gedaan door elkaar: thema ${done.length===1?done[0]:'1 t/m '+Math.max(...done)}</small></span></button>`
-   :`<button class="mix locked" data-act="mixlocked"><span class="ico">🎨</span><span><strong>Mix</strong><small>Rond ${MIXMIN} thema’s af om alles door elkaar te oefenen (nog ${MIXMIN-done.length})</small></span></button>`;
+  if(first)h+=`<div class="hint">Begin bij thema 1. Per thema kun je flitskaarten, woorden en zinnen oefenen. Haal bij Woorden minstens 80% goed, dan gaat het volgende thema open.</div>`;
+  h+= pr.length
+   ?`<button class="mix" data-act="theme" data-n="mix"><span class="ico">🔁</span><span><strong>Herhaal alles</strong><small>Alle ${itemsFor(pr).length} woorden en zinnen die je al hebt geoefend (${pr.length} thema${pr.length>1?'’s':''})</small></span></button>`
+   :`<button class="mix locked" data-act="mixlocked"><span class="ico">🔁</span><span><strong>Herhaal alles</strong><small>Oefen eerst een thema, dan kun je hier alles herhalen</small></span></button>`;
   h+=`<div class="path">`+THEMES.map(t=>{
     const lock=!unlocked(t.n),dn=isDone(t.n),st=(S.themes[t.n]&&S.themes[t.n].stars)||0;
     const cls=lock?'locked':dn?'done':'open';
@@ -677,50 +925,73 @@ function wordRows(t){
   if(t.nums){
     h+=`<details class="card nums"><summary>Telwoorden 1-100</summary><div class="ng">`+Array.from({length:100},(_,k)=>`<span><b>${k+1}</b> ${frNum(k+1)}</span>`).join('')+`</div></details>`;
   }
+  if(t.sents.length){
+    h+=`<div class="wg" style="margin-top:22px">Zinnen</div>`+t.sents.map(s=>`<div class="card w"><div><b style="font-size:16px">${esc(s.fr)}</b><span>${esc(s.nl)}</span></div><button class="spk" data-act="say" data-t="${esc(speakText(s.fr))}" aria-label="Luister">🔊</button></div>`).join('');
+  }
   return h;
 }
+const modeBtn=(m,emoji,color,title,sub)=>`<button class="mode" data-act="mode" data-m="${m}"><span class="mi" style="background:${color}">${emoji}</span><span class="mt"><strong>${title}</strong><small>${sub}</small></span><span class="go">›</span></button>`;
 
 function viewTheme(){
   const isMix=V.n==='mix';
-  let t,color,emoji,title,sub,info,nums,rounds,best,starsN,count;
+  const nums=isMix?practicedList():[V.n];
+  if(!nums.length||(!isMix&&!themeBy(V.n)))return viewHome();
+  let t,color,emoji,title,sub,info='',rounds,best,starsN,flashN=0,sentBest=0;
   if(isMix){
-    nums=doneList();color='#bfaef2';emoji='🎨';title='Mix';sub='Alles wat je al hebt gedaan door elkaar';
-    rounds=S.mix.rounds;best=S.mix.best;starsN=starsFor(best);count=MIXROUND;
+    color='#bfaef2';emoji='🔁';title='Herhaal alles';sub='Alles wat je tot nu toe hebt geoefend';
+    rounds=S.mix.rounds;best=S.mix.best;starsN=starsFor(best);
     info=`<div class="chiprow">`+nums.map(n=>`<span class="chip" style="background:${themeBy(n).color}">${n} ${themeBy(n).emoji}</span>`).join('')+`</div>`;
   }else{
-    t=themeBy(V.n);nums=[t.n];color=t.color;emoji=t.emoji;title=t.name;sub=t.sub||('Thema '+t.n);
-    const st=S.themes[t.n]||{};rounds=st.rounds||0;best=st.best||0;starsN=st.stars||0;count=ROUND;info='';
+    t=themeBy(V.n);color=t.color;emoji=t.emoji;title=t.name;sub=t.sub||('Thema '+t.n);
+    const st=T(t.n);rounds=st.rounds;best=st.best;starsN=st.stars;flashN=st.flash;sentBest=st.sentBest;
   }
+  const dir=S.dir;
   let h=`<div class="screen"><button class="back" data-act="home">← Terug</button>
   <div class="hero" style="--c:${color}"><div class="big">${emoji}</div><h2>${esc(title)}</h2><p>${esc(sub)}</p></div>
-  <div class="stats"><div class="card stat"><b>${rounds}</b><span>rondes</span></div><div class="card stat"><b>${Math.round(best*100)}%</b><span>beste score</span></div><div class="card stat"><div class="stars" style="justify-content:center;margin:4px 0 6px">${stars(starsN,20)}</div><span>sterren</span></div></div>${info}`;
-  if(!isMix&&!isDone(t.n))h+=`<div class="hint">Haal minstens ${Math.round(PASS*ROUND)} van de ${ROUND} goed om ${t.n<10?'thema '+(t.n+1)+' te openen':'dit thema af te ronden'}.</div>`;
+  <div class="stats"><div class="card stat"><b>${rounds}</b><span>woordrondes</span></div><div class="card stat"><b>${Math.round(best*100)}%</b><span>beste score</span></div><div class="card stat"><div class="stars" style="justify-content:center;margin:4px 0 6px">${stars(starsN,20)}</div><span>sterren</span></div></div>${info}`;
+  if(!isMix&&!isDone(t.n))h+=`<div class="hint">Haal bij <b>Woorden</b> minstens 80% goed om ${t.n<10?'thema '+(t.n+1)+' te openen':'dit thema af te ronden'}.</div>`;
   else if(!isMix)h+=`<div class="hint" style="background:#dff5e9">Thema af! Je mag zoveel oefenen als je wilt.</div>`;
-  h+=`<button class="btn" data-act="start">Start oefenronde (${count} vragen)</button>`;
-  if(!isMix){
-    h+=`<h3 class="sec">Woordenlijst</h3>`+wordRows(t);
-  }else{
-    h+=`<p class="tiny">De mix kiest vooral woorden die je nog lastig vindt.</p>`;
-  }
+  h+=`<div class="dlabel">Welke kant op?</div><div class="dirs">`+Object.keys(DIRS).map(d=>`<button data-act="dir" data-d="${d}" class="${dir===d?'on':''}">${DIRS[d]}</button>`).join('')+`</div>`;
+  const wq=wordQCount(nums,dir),sq=sentQCount(nums,dir);
+  h+=modeBtn('flash','🃏','#8ec5ee','Flitskaarten',`${wq} kaarten${flashN?' · '+flashN+'× gedaan':''}`);
+  h+=modeBtn('words','🔤','#f6c548','Woorden',`${wq} vragen · alle woorden komen langs${best?' · beste '+Math.round(best*100)+'%':''}`);
+  h+=modeBtn('sent','🧩','#f6a9b9','Zinnen',`${sq} zinnen vertalen, praten en typen${sentBest?' · beste '+Math.round(sentBest*100)+'%':''}`);
+  h+=`<p class="tiny" style="margin:6px 0 0">Foute antwoorden komen aan het eind van de ronde terug. Bij het Frans wissel je af tussen praten en typen.</p>`;
+  if(!isMix)h+=`<h3 class="sec">Woordenlijst</h3>`+wordRows(t);
   return h+`</div>`;
 }
 
 function quizBody(q,r){
+  if(q.prod&&!q.mode){q.mode=(canSpeak&&r.alt%2===0)?'speak':'type';r.alt++;}
+  if(r.curQ!==q){r.curQ=q;r.sel=[];r.listening=false;}
   const first=r.firstTotal;
-  const cnt=q.retry?'Herhalen':(r.i+1)+'/'+first;
-  const pct=Math.min(r.i,first)/first*100;
-  const chip=q.num?'':`<span class="chip">${TYPELABEL[q.t]}</span>`;
+  const cnt=q.retry?('Herhalen · nog '+(r.queue.length-r.i)):(r.i+1)+'/'+first;
+  const pct=q.retry?100:Math.min(r.i,first)/first*100;
+  const chip=(q.num||q.sent)?'':`<span class="chip">${TYPELABEL[q.t]}</span>`;
   const rep=q.retry?`<span class="chip rep">Nog een keer</span>`:'';
+  const mod=q.prod?(q.mode==='speak'?`<span class="chip m">🎤 Praten</span>`:`<span class="chip m">⌨️ Typen</span>`):'';
+  let title=q.title;
+  if(q.prod){
+    const what=q.num?'het getal':q.sent?'de zin':'het';
+    title=q.mode==='speak'?`Zeg ${what} in het Frans`:`Typ ${what} in het Frans${q.num?'':' (let op de spelling)'}`;
+  }
   let h=`<div class="screen quiz"><div class="qtop"><button class="x" data-act="quit" aria-label="Stoppen">✕</button><div class="bar"><i style="width:${pct}%"></i></div><span class="cnt">${cnt}</span></div>
-  <div class="card qcard"><div class="chiprow" style="margin:0">${chip}${rep}</div><p class="qtitle">${q.title}</p>`;
+  <div class="card qcard"><div class="chiprow" style="margin:0">${chip}${mod}${rep}</div>`;
+  if(q.note)h+=`<p class="note">${q.note}</p>`;
+  else if(q.prod&&!canSpeak&&!r.noteShown){r.noteShown=true;q.note='Praten werkt niet in deze browser, daarom typ je dit.';h+=`<p class="note">${q.note}</p>`;}
+  h+=`<p class="qtitle">${title}</p>`;
   const listenOnly=(q.kind==='listen'||q.listen);
   if(listenOnly){
     h+=`<div class="prompt"><button class="spk" data-act="sayq" style="width:76px;height:76px;font-size:32px" aria-label="Luister">🔊</button></div><button class="showw" data-act="showw">Toon het woord</button><div id="shown" class="prompt" style="display:none;padding-top:6px">${esc(q.prompt)}</div>`;
   }else{
-    h+=`<div class="prompt ${q.promptCls}">${esc(q.prompt)}${q.promptCls==='fr'?`<button class="spk" data-act="sayq" aria-label="Luister">🔊</button>`:''}</div>`;
+    h+=`<div class="prompt ${q.promptCls}">${esc(q.prompt)}${/(^| )fr( |$)/.test(q.promptCls)?`<button class="spk" data-act="sayq" aria-label="Luister">🔊</button>`:''}</div>`;
   }
   if(q.mode==='choice'){
     h+=`<div class="opts">`+q.opts.map((o,i)=>`<button class="opt" data-act="pick" data-i="${i}">${esc(o)}</button>`).join('')+`</div>`;
+  }else if(q.mode==='speak'){
+    h+=`<div class="mic"><button class="micbtn" data-act="mic" aria-label="Spreek in">🎤</button><div class="micst" id="micst">Tik op de microfoon en zeg het</div></div><button class="showw" data-act="totype">Liever typen</button>`;
+  }else if(q.mode==='tiles'){
+    h+=`<div id="tiles"></div>`;
   }else{
     h+=`<div class="typebox"><input id="ti" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" lang="fr" placeholder="Typ hier…"><button class="btn blue" data-act="check">OK</button></div>
     <div class="accents">${['é','è','ê','à','â','ç','î','ô','û','œ'].map(c=>`<button data-act="ch" data-c="${c}" tabindex="-1">${c}</button>`).join('')}</div>`;
@@ -728,35 +999,64 @@ function quizBody(q,r){
   h+=`</div><div id="fbslot"></div></div>`;
   return h;
 }
-
+function tilesHTML(q,r){
+  const used=new Set(r.sel);
+  const ans=r.sel.map(id=>{const b=q.bank.find(x=>x.id===id);return `<button class="tile sel" data-act="untile" data-id="${id}">${esc(b.t)}</button>`;}).join('');
+  const bank=q.bank.map(b=>`<button class="tile ${used.has(b.id)?'ghost':''}" data-act="tile" data-id="${b.id}" ${used.has(b.id)?'disabled':''}>${esc(b.t)}</button>`).join('');
+  return `<div class="answerrow">${ans}</div><div class="bank">${bank}</div><button class="btn blue" data-act="tcheck" ${r.sel.length?'':'disabled style="opacity:.5"'}>Controleer</button>`;
+}
 function viewQuiz(){
   const r=V.round,q=r.queue[r.i];
   const h=quizBody(q,r);
   setTimeout(()=>{
     const ti=$('#ti');if(ti){ti.focus({preventScroll:true});ti.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();actions.check();}});}
+    if(q.mode==='tiles'){const el=$('#tiles');if(el)el.innerHTML=tilesHTML(q,r);}
     if((q.kind==='listen'||q.listen)&&!q.noAuto)speak(q.speak);
   },60);
   return h;
 }
 
+function missedRows(list){
+  return list.map(m=>m.sentObj?`<div class="card w"><div><b style="font-size:16px">${esc(m.sentObj.fr)}</b><span>${esc(m.sentObj.nl)}</span></div><button class="spk" data-act="say" data-t="${esc(speakText(m.sentObj.fr))}">🔊</button></div>`
+   :`<div class="card w"><div><b>${esc(m.item.fr)}</b><span>${esc(m.item.nl)}</span></div><button class="spk" data-act="say" data-t="${esc(speakText(m.item.fr))}">🔊</button></div>`).join('');
+}
 function viewResult(){
   const x=V.result;
   const pct=Math.round(x.pct*100);
   const msg=x.pct>=1?'Parfait! Alles goed!':x.pct>=.9?'Magnifique!':x.pct>=PASS?'Très bien, gehaald!':x.pct>=.5?'Bijna! Nog even oefenen.':'Niet erg, oefen nog een keer.';
   let h=`<div class="screen res"><h2 style="font-size:28px;margin-top:6px">${msg}</h2>
-  <div class="big">${x.correct}/${x.total}</div><div>${pct}% goed</div>
+  <div class="big">${x.correct}/${x.total}</div><div>${pct}% in één keer goed${x.type==='sent'?' · zinnen':''}</div>
   <div class="bigstars">${stars(x.stars,54)}</div>`;
   if(x.newlyDone&&x.theme)h+=`<p><b>Thema ${x.theme} af!</b>${x.theme<10?' Thema '+(x.theme+1)+' is nu open.':''}</p>`;
-  else if(!x.mix&&x.pct<PASS&&!isDone(x.theme))h+=`<p>Haal minstens ${Math.round(PASS*ROUND)} van de ${ROUND} goed om door te gaan.</p>`;
+  else if(!x.mix&&x.type==='words'&&x.pct<PASS&&!isDone(x.theme))h+=`<p>Haal minstens 80% goed om door te gaan.</p>`;
   if(x.newBadges.length){
     h+=`<h3 style="font-size:19px;margin-top:8px">Nieuwe badge${x.newBadges.length>1?'s':''}!</h3><div class="newb">`+x.newBadges.map((b,i)=>`<div class="card nb" style="animation-delay:${i*.15}s"><div class="bd" style="--c:${b.color}">${b.emoji}</div><b>${esc(b.name)}</b></div>`).join('')+`</div>`;
   }
-  if(x.missed.length){
-    h+=`<div class="missed"><div class="wg">Nog even oefenen</div>`+x.missed.map(i=>`<div class="card w"><div><b>${esc(i.fr)}</b><span>${esc(i.nl)}</span></div><button class="spk" data-act="say" data-t="${esc(speakText(i.fr))}">🔊</button></div>`).join('')+`</div>`;
-  }
+  if(x.missed.length)h+=`<div class="missed"><div class="wg">Nog even oefenen</div>${missedRows(x.missed)}</div>`;
   h+=`<button class="btn" data-act="again">Nog een ronde</button>`;
-  if(x.theme&&x.theme<10&&isDone(x.theme))h+=`<button class="btn blue" data-act="nexttheme">Naar thema ${x.theme+1}</button>`;
-  h+=`<button class="btn alt" data-act="home">Terug naar het pad</button></div>`;
+  if(x.theme&&x.type==='words'&&x.theme<10&&isDone(x.theme))h+=`<button class="btn blue" data-act="nexttheme">Naar thema ${x.theme+1}</button>`;
+  h+=`<button class="btn alt" data-act="back2theme">Terug naar het thema</button><button class="btn alt" data-act="home">Terug naar het pad</button></div>`;
+  return h;
+}
+
+/* flitskaarten */
+function viewFlash(){
+  const f=V.flash,c=f.queue[f.i];
+  const frTxt=c.num?frNum(c.num):c.it.fr,nlTxt=c.num?String(c.num):c.it.nl;
+  const frontIsFr=c.side==='fr';
+  const front=frontIsFr?frTxt:nlTxt,back=frontIsFr?nlTxt:frTxt;
+  const spk=`<button class="spk" data-act="say" data-t="${esc(speakText(frTxt))}" aria-label="Luister">🔊</button>`;
+  const pct=f.known/f.total*100;
+  return `<div class="screen quiz" style="padding-bottom:20px"><div class="qtop"><button class="x" data-act="fquit" aria-label="Stoppen">✕</button><div class="bar"><i style="width:${pct}%"></i></div><span class="cnt">${f.known}/${f.total}</span></div>
+  <div class="fcwrap"><div class="fc" id="fc" data-act="flip"><div class="face front"><small>${frontIsFr?'Frans':'Nederlands'}</small><b class="${frontIsFr?'':'nlw'}">${esc(front)}</b>${frontIsFr?spk:''}<small style="text-transform:none;letter-spacing:0;font-weight:700">Tik op de kaart om om te draaien</small></div>
+  <div class="face back" style="--c:${f.color}"><small>${frontIsFr?'Nederlands':'Frans'}</small><b class="${frontIsFr?'nlw':''}">${esc(back)}</b>${frontIsFr?'':spk}</div></div></div>
+  <div class="fbtns hid" id="fbtns"><button class="btn alt" data-act="fagain" style="flex:1">Nog oefenen</button><button class="btn ok" data-act="fknow" style="flex:1">Wist ik</button></div></div>`;
+}
+function viewFlashRes(){
+  const f=V.flash,bd=f.newBadges||[];
+  let h=`<div class="screen res"><h2 style="font-size:28px;margin-top:6px">Klaar met de kaarten!</h2><div class="big">${f.total}</div><div>kaarten gehaald${f.again?` · ${f.again}× nog eens geoefend`:''}</div>`;
+  if(bd.length)h+=`<h3 style="font-size:19px;margin-top:14px">Nieuwe badge${bd.length>1?'s':''}!</h3><div class="newb">`+bd.map((b,i)=>`<div class="card nb" style="animation-delay:${i*.15}s"><div class="bd" style="--c:${b.color}">${b.emoji}</div><b>${esc(b.name)}</b></div>`).join('')+`</div>`;
+  h+=`<p style="margin-top:14px">Probeer nu de oefenvraag bij Woorden of Zinnen.</p><button class="btn" data-act="flashagain">Nog een stapel</button><button class="btn alt" data-act="back2theme">Terug naar het thema</button><button class="btn alt" data-act="home">Terug naar het pad</button></div>`;
   return h;
 }
 
@@ -770,46 +1070,50 @@ function viewBadges(){
   <p class="tiny">${memOnly?'Let op: je voortgang kan op dit apparaat niet worden bewaard.':'Je voortgang staat op dit apparaat.'}</p>
   <button class="btn alt" style="margin-top:18px" data-act="resetask">Voortgang wissen</button></div>`;
 }
-
 function renderNav(){
-  const quiz=V.screen==='quiz';
-  $('#nav').innerHTML=quiz?'':`<div class="nav"><div><button data-act="home" class="${V.screen!=='badges'?'on':''}"><span>🥐</span>Oefenen</button><button data-act="badges" class="${V.screen==='badges'?'on':''}"><span>🏅</span>Badges</button></div></div>`;
+  const hide=V.screen==='quiz'||V.screen==='flash';
+  $('#nav').innerHTML=hide?'':`<div class="nav"><div><button data-act="home" class="${V.screen!=='badges'?'on':''}"><span>🥐</span>Oefenen</button><button data-act="badges" class="${V.screen==='badges'?'on':''}"><span>🏅</span>Badges</button></div></div>`;
 }
 function render(){
-  const m={home:viewHome,theme:viewTheme,quiz:viewQuiz,result:viewResult,badges:viewBadges};
+  const m={home:viewHome,theme:viewTheme,quiz:viewQuiz,result:viewResult,badges:viewBadges,flash:viewFlash,flashres:viewFlashRes};
   $('#app').innerHTML=(m[V.screen]||viewHome)();
   renderNav();
 }
 
 /* ============ ACTIES ============ */
-function toast(t){
-  const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2600);
-}
+function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2800);}
 function confetti(){
   const c=document.createElement('div');c.className='conf';const cols=['#2b4aa8','#ffffff','#e0414b','#f6c548'];
   for(let i=0;i<48;i++){const p=document.createElement('i');p.style.cssText=`left:${Math.random()*100}%;background:${cols[i%4]};animation-delay:${Math.random()*.6}s;animation-duration:${2+Math.random()*1.6}s;transform:rotate(${Math.random()*360}deg)`;c.appendChild(p);}
   document.body.appendChild(c);setTimeout(()=>c.remove(),4300);
 }
-function startRound(){
-  const mix=V.n==='mix';
-  const nums=mix?doneList():[V.n];
-  const qs=buildRound(nums,mix?MIXROUND:ROUND);
-  V.round={mix,theme:mix?null:V.n,nums,queue:qs,i:0,firstTotal:qs.length,correct:0,missed:[],answered:false};
+const roundNums=()=>V.n==='mix'?practicedList():[V.n];
+function touch(){const mix=V.n==='mix';if(!mix){T(V.n).touched=true;save();}}
+
+function startRound(type){
+  const mix=V.n==='mix',nums=roundNums();
+  const qs=type==='sent'?buildSent(nums,S.dir):buildWords(nums,S.dir);
+  if(!qs.length){toast('Hier is nog niets te oefenen.');return;}
+  touch();stopListening();
+  V.round={type,mix,theme:mix?null:V.n,nums,queue:qs,i:0,firstTotal:qs.length,correct:0,missed:[],answered:false,alt:0,sel:[],curQ:null,noteShown:false,listening:false};
   V.screen='quiz';
   try{history.pushState({s:'quiz'},'');}catch(e){}
   render();window.scrollTo(0,0);
 }
 function finishRound(){
-  const r=V.round;
-  const pct=r.correct/r.firstTotal;
-  const res={correct:r.correct,total:r.firstTotal,pct,stars:starsFor(pct),mix:r.mix,theme:r.theme,newlyDone:false,missed:r.missed,newBadges:[]};
+  const r=V.round,pct=r.correct/r.firstTotal;
+  const res={type:r.type,correct:r.correct,total:r.firstTotal,pct,stars:starsFor(pct),mix:r.mix,theme:r.theme,newlyDone:false,missed:r.missed,newBadges:[]};
   S.rounds++;S.correct+=r.correct;if(pct>=1)S.perfect++;
   const d=today();if(!S.days.includes(d)){S.days.push(d);S.days=S.days.slice(-60);}
-  if(r.mix){S.mix.rounds++;S.mix.best=Math.max(S.mix.best,pct);}
-  else{
-    const t=S.themes[r.theme]||(S.themes[r.theme]={rounds:0,best:0,stars:0,done:false});
-    t.rounds++;t.best=Math.max(t.best,pct);t.stars=starsFor(t.best);
-    if(pct>=PASS&&!t.done){t.done=true;res.newlyDone=true;}
+  if(r.type==='words'){
+    if(r.mix){S.mix.rounds++;S.mix.best=Math.max(S.mix.best,pct);}
+    else{
+      const t=T(r.theme);t.rounds++;t.best=Math.max(t.best,pct);t.stars=starsFor(t.best);
+      if(pct>=PASS&&!t.done){t.done=true;res.newlyDone=true;}
+    }
+  }else{
+    if(pct>=PASS)S.sentGood++;
+    if(!r.mix){const t=T(r.theme);t.sentRounds++;t.sentBest=Math.max(t.sentBest,pct);}
   }
   res.newBadges=checkBadges();
   save();
@@ -818,77 +1122,166 @@ function finishRound(){
   render();window.scrollTo(0,0);
   if(pct>=PASS)confetti();
 }
-function answered(ok,q,extra){
-  const r=V.round;r.answered=true;
-  const first=!q.retry;
-  if(first){
+function answered(ok,q,info){
+  info=info||{};
+  const r=V.round;r.answered=true;stopListening();
+  if(ok&&info.heard!==undefined){S.spoken++;}
+  if(!q.retry){
     if(ok)r.correct++;
     else{
-      if(q.item&&!r.missed.some(m=>m.key===q.item.key))r.missed.push(q.item);
-      const kinds=q.num?[q.kind==='n_d2fr'?'n_fr2d':'n_d2fr']:['fr2nl','nl2fr'];
-      const k=kinds[rnd(0,kinds.length-1)];
-      const copy=q.num?numQ(k,q.n):makeQ(q.item,k,new Set(r.nums));
-      copy.retry=true;copy.noAuto=true;r.queue.push(copy);
+      const m=q.sentObj?{sentObj:q.sentObj,key:q.key}:q.item?{item:q.item,key:q.key}:null;
+      if(m&&!r.missed.some(x=>x.key===m.key))r.missed.push(m);
     }
-    if(q.key){const w=S.words[q.key]||(S.words[q.key]={ok:0,miss:0});if(ok)w.ok++;else w.miss++;}
-    save();
+    if(q.item&&q.key){const w=S.words[q.key]||(S.words[q.key]={ok:0,miss:0});if(ok)w.ok++;else w.miss++;}
   }
+  if(!ok&&(q.tries||0)<2)r.queue.push(cloneQ(q,new Set(r.nums)));
+  save();
   const last=r.i>=r.queue.length-1;
-  const pair=q.num?`<b>${esc(q.n)}</b> = ${esc(frNum(q.n))}`:`<b>${esc(q.item.fr)}</b> = ${esc(q.item.nl)}`;
-  const pick=a=>a[rnd(0,a.length-1)];
+  const pair=q.num?`<b>${esc(q.n)}</b> = ${esc(frNum(q.n))}`:q.sent?`<b>${esc(q.sentObj.fr)}</b><br>${esc(q.sentObj.nl)}`:`<b>${esc(q.item.fr)}</b> = ${esc(q.item.nl)}`;
+  let extra='';
+  if(info.heard!==undefined)extra+=`<br><span style="font-size:13px">Ik hoorde: “${esc(info.heard)}”</span>`;
+  if(!ok&&info.typed!==undefined){
+    const best=closest(info.typed,q.answers||[q.show]);
+    extra+=`<div class="typed">Jij typte: <b>${esc(info.typed)}</b><br>Juist: <b>${diffHTML(info.typed,best)}</b>${info.near==='accent'?'<br>Let op de accenten!':''}</div>`;
+  }
+  const again=(!ok&&(q.tries||0)<2)?'<br><span style="font-size:13px">Je krijgt deze straks nog een keer.</span>':'';
   const body=ok
-    ?`<h3>${pick(PHR_OK)}</h3><div class="row"><p>${pair}${extra||''}</p><button class="spk" data-act="sayq">🔊</button></div>`
-    :`<h3>${pick(PHR_BAD)}</h3><div class="row"><p>Het juiste antwoord is:<br>${pair}${q.retry?'':'<br><span style="font-size:13px">Je krijgt deze straks nog een keer.</span>'}</p><button class="spk" data-act="sayq">🔊</button></div>`;
+    ?`<h3>${pickOne(PHR_OK)}</h3><div class="row"><div class="fbtxt">${pair}${extra}</div><button class="spk" data-act="sayq">🔊</button></div>`
+    :`<h3>${pickOne(PHR_BAD)}</h3><div class="row"><div class="fbtxt">${info.typed!==undefined?'':'Het juiste antwoord is:<br>'}${info.typed!==undefined?extra+pair:pair+extra}${again}</div><button class="spk" data-act="sayq">🔊</button></div>`;
   $('#fbslot').innerHTML=`<div class="fb ${ok?'ok':'bad'}"><div>${body}<button class="btn ${ok?'ok':''}" data-act="next">${last?'Klaar':'Verder'}</button></div></div>`;
-  const ti=$('#ti');if(ti){ti.disabled=true;}
-  document.querySelectorAll('.typebox .btn,.accents button').forEach(b=>b.disabled=true);
+  const ti=$('#ti');if(ti)ti.disabled=true;
+  document.querySelectorAll('.typebox .btn,.accents button,.micbtn,.showw,[data-act=tile],[data-act=untile],[data-act=tcheck]').forEach(b=>b.disabled=true);
   setTimeout(()=>{const nb=document.querySelector('.fb .btn');if(nb)nb.focus({preventScroll:true});},50);
 }
+
+/* flitskaarten starten */
+function startFlash(){
+  const nums=roundNums(),multi=nums.length>1,cards=[];
+  const color=V.n==='mix'?'#bfaef2':themeBy(V.n).color;
+  itemsFor(nums).forEach(it=>dirsFor(S.dir,multi).forEach(d=>cards.push({it,side:d==='fr2nl'?'fr':'nl'})));
+  const ne=numExtra(nums);
+  for(let i=0;i<ne;i++){const d=S.dir==='both'?(i%2?'nl2fr':'fr2nl'):S.dir;cards.push({num:rnd(1,100),side:d==='fr2nl'?'fr':'nl'});}
+  if(!cards.length){toast('Hier is nog niets te oefenen.');return;}
+  touch();
+  V.flash={queue:shuffle(cards),i:0,flipped:false,total:cards.length,known:0,again:0,color,newBadges:[]};
+  V.screen='flash';
+  try{history.pushState({s:'flash'},'');}catch(e){}
+  render();window.scrollTo(0,0);
+}
+function flashNext(){
+  const f=V.flash;f.i++;f.flipped=false;
+  if(f.i>=f.queue.length){
+    S.flashDecks++;if(V.n!=='mix')T(V.n).flash++;
+    const d=today();if(!S.days.includes(d)){S.days.push(d);S.days=S.days.slice(-60);}
+    f.newBadges=checkBadges();save();
+    V.screen='flashres';
+    try{history.pushState({s:'flashres'},'');}catch(e){}
+    render();window.scrollTo(0,0);
+    if(f.newBadges.length)confetti();
+    return;
+  }
+  render();
+}
+
 const actions={
-  home(){if(V.screen==='quiz'&&!V.round)return;V.screen='home';render();window.scrollTo(0,0);},
+  home(){stopListening();V.screen='home';render();window.scrollTo(0,0);},
+  back2theme(){V.screen='theme';render();window.scrollTo(0,0);},
   badges(){go('badges');},
   theme(b){
     const v=b.dataset.n;
     if(v==='mix'){go('theme','mix');return;}
     const n=+v;
-    if(!unlocked(n)){b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');toast('Rond eerst thema '+(n-1)+' af (minstens '+Math.round(PASS*ROUND)+' van de '+ROUND+' goed)');return;}
+    if(!unlocked(n)){b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');toast('Rond eerst thema '+(n-1)+' af (minstens 80% goed bij Woorden)');return;}
     go('theme',n);
   },
-  mixlocked(b){b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');toast('Rond eerst '+MIXMIN+' thema’s af');},
-  start(){startRound();},
-  again(){const r=V.result;V.n=r.mix?'mix':r.theme;startRound();},
+  mixlocked(b){b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');toast('Oefen eerst een thema');},
+  dir(b){S.dir=b.dataset.d;save();render();},
+  mode(b){const m=b.dataset.m;if(m==='flash')startFlash();else startRound(m);},
+  again(){const r=V.result;V.n=r.mix?'mix':r.theme;startRound(r.type);},
+  flashagain(){startFlash();},
   nexttheme(){V.n=V.result.theme+1;V.screen='theme';render();window.scrollTo(0,0);},
   say(b){speak(b.dataset.t);},
   sayq(){const q=V.round.queue[V.round.i];speak(q.speak);},
   showw(b){const e=$('#shown');if(e){e.style.display='flex';}b.style.display='none';},
   quit(){
     const bg=document.createElement('div');bg.className='sheetbg';
-    bg.innerHTML=`<div class="sheet"><h3>Stoppen?</h3><p>Deze ronde telt dan niet mee.</p><button class="btn" data-act="sheetclose">Doorgaan met oefenen</button><button class="btn alt" data-act="sheetquit">Stoppen</button></div>`;
+    bg.innerHTML=`<div class="sheet"><h3>Stoppen?</h3><p>Het cijfer van deze ronde telt dan niet mee.</p><button class="btn" data-act="sheetclose">Doorgaan met oefenen</button><button class="btn alt" data-act="sheetquit">Stoppen</button></div>`;
     document.body.appendChild(bg);
   },
+  fquit(){actions.quit();},
   sheetclose(){document.querySelector('.sheetbg').remove();},
-  sheetquit(){document.querySelector('.sheetbg').remove();V.round=null;V.screen='theme';render();window.scrollTo(0,0);},
+  sheetquit(){document.querySelector('.sheetbg').remove();stopListening();V.round=null;V.flash=null;V.screen='theme';render();window.scrollTo(0,0);},
   pick(b){
     const r=V.round;if(r.answered)return;
-    const q=r.queue[r.i],i=+b.dataset.i;
-    const ok=q.opts[i]===q.answer;
+    const q=r.queue[r.i],i=+b.dataset.i,ok=q.opts[i]===q.answer;
     document.querySelectorAll('.opt').forEach((o,k)=>{o.disabled=true;if(q.opts[k]===q.answer)o.classList.add('good');});
     if(!ok)b.classList.add('wrong');
     answered(ok,q);
   },
   check(){
     const r=V.round;if(!r||r.answered)return;
-    const q=r.queue[r.i],ti=$('#ti');if(!ti||!ti.value.trim()){return;}
+    const q=r.queue[r.i],ti=$('#ti');if(!ti||!ti.value.trim())return;
     const res=checkTyped(ti.value,q.answers);
     ti.style.background=res.ok?'#c9f0dc':'#fbd3d6';
-    answered(res.ok,q,res.ok&&res.accent?`<br><span style="font-size:13px">Let op de accenten: ${esc(q.show)}</span>`:'');
+    answered(res.ok,q,{typed:ti.value.trim(),near:res.near});
   },
   ch(b){const ti=$('#ti');if(!ti||ti.disabled)return;const s=ti.selectionStart==null?ti.value.length:ti.selectionStart,e=ti.selectionEnd==null?s:ti.selectionEnd;ti.value=ti.value.slice(0,s)+b.dataset.c+ti.value.slice(e);ti.focus();const p=s+1;try{ti.setSelectionRange(p,p);}catch(x){}},
+  totype(){const r=V.round,q=r.queue[r.i];if(r.answered)return;stopListening();q.mode='type';render();},
+  mic(){
+    const r=V.round,q=r.queue[r.i];if(!r||r.answered||r.listening)return;
+    const st=$('#micst'),btn=$('.micbtn');
+    r.listening=true;if(st)st.textContent='Ik luister…';if(btn)btn.classList.add('on');
+    startListening(res=>{
+      r.listening=false;
+      if(r.queue[r.i]!==q||r.answered)return;
+      const st2=$('#micst'),b2=$('.micbtn');if(b2)b2.classList.remove('on');
+      if(res.error){
+        if(res.error==='no-speech'||res.error==='aborted'){if(st2)st2.textContent='Ik hoorde niets. Tik op de microfoon en praat opnieuw.';return;}
+        q.mode='type';q.note=res.error==='not-allowed'||res.error==='service-not-allowed'?'De microfoon mag niet worden gebruikt, daarom typ je dit.':'Praten lukt nu niet, daarom typ je dit.';
+        render();return;
+      }
+      const heard=res.alts[0]||'';
+      if(checkSpoken(res.alts,q.answers,q.sent,q.num?String(q.n):null)){answered(true,q,{heard});}
+      else{
+        q.speakTries=(q.speakTries||0)+1;
+        if(q.speakTries<2){if(st2)st2.textContent='Ik hoorde: “'+heard+'”. Probeer nog één keer, of tik op Liever typen.';}
+        else answered(false,q,{heard});
+      }
+    });
+  },
+  tile(b){const r=V.round,q=r.queue[r.i];if(r.answered)return;r.sel.push(+b.dataset.id);$('#tiles').innerHTML=tilesHTML(q,r);},
+  untile(b){const r=V.round,q=r.queue[r.i];if(r.answered)return;r.sel=r.sel.filter(x=>x!==+b.dataset.id);$('#tiles').innerHTML=tilesHTML(q,r);},
+  tcheck(){
+    const r=V.round,q=r.queue[r.i];if(r.answered||!r.sel.length)return;
+    const words=r.sel.map(id=>q.bank.find(x=>x.id===id).t);
+    const mine=looseN(words.join(' '));
+    const ok=q.targets.some(t=>looseN(t.join(' '))===mine);
+    document.querySelector('.answerrow').style.background=ok?'#c9f0dc':'#fbd3d6';
+    answered(ok,q,{});
+  },
   next(){
     const r=V.round;if(!r||!r.answered)return;
     r.i++;r.answered=false;
     if(r.i>=r.queue.length){finishRound();return;}
     render();window.scrollTo(0,0);
+  },
+  flip(){
+    const f=V.flash,fc=$('#fc');if(!fc)return;
+    f.flipped=!f.flipped;fc.classList.toggle('flip',f.flipped);
+    const fb=$('#fbtns');if(fb)fb.classList.toggle('hid',!f.flipped);
+  },
+  fknow(){
+    const f=V.flash,c=f.queue[f.i];if(!f.flipped)return;
+    f.known++;
+    if(c.it){const w=S.words[c.it.key]||(S.words[c.it.key]={ok:0,miss:0});w.ok++;save();}
+    flashNext();
+  },
+  fagain(){
+    const f=V.flash,c=f.queue[f.i];if(!f.flipped)return;
+    f.again++;
+    if(c.it){const w=S.words[c.it.key]||(S.words[c.it.key]={ok:0,miss:0});w.miss++;save();}
+    f.queue.push({it:c.it,num:c.num,side:c.side});
+    flashNext();
   },
   resetask(){
     const bg=document.createElement('div');bg.className='sheetbg';
